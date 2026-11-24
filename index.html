@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PENGUIN - Media Hub</title>
+<title>PENGUIN - Media Hub</title><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff0000">
+ 
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #121212; color: #ffffff; font-family: Arial, sans-serif; padding-bottom: 70px; }
@@ -206,6 +208,35 @@
   createVideoCard("🎵 লফাই মিউজিক (Chill Beats)", "jfKfPfyJRdk", "music", false);
   createVideoCard("🌍 প্রকৃতির দৃশ্য (4K Nature)", "LXb3EKWsInQ", "nature", false);
   createVideoCard("⚡ 3D অ্যানিমেশন শর্ট ফিল্ম", "aqz-KE-bpKQ", "shorts", false);
+</script>
+<button id="installAppBtn" style="display:none; position:fixed; bottom:75px; right:15px; background:#ff0000; color:#fff; border:none; padding:12px 18px; border-radius:25px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5); z-index:9999; cursor:pointer;">
+  ⬇ অ্যাপ ডাউনলোড করুন
+</button>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('installAppBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    }
+  });
 </script>
 
 </body>
