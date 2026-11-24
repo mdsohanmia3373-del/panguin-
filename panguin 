@@ -1,1 +1,35 @@
 index.html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PENGUIN</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:white;font-family:Arial}
+header{background:#171717;padding:18px;font-size:25px;font-weight:bold;color:#00d9ff}
+.search{padding:12px}
+input{width:100%;padding:12px;border-radius:10px;border:none}
+.card{background:#222;margin:12px;padding:12px;border-radius:12px}
+video{width:100%;border-radius:10px}
+button{background:#00d9ff;border:none;padding:12px;border-radius:10px;font-weight:bold}
+</style>
+</head>
+<body>
+<header>🐧 PENGUIN</header>
+<div class="search">
+<input placeholder="ভিডিও খুঁজুন...">
+</div>
+<div class="card">
+<h3>PENGUIN ভিডিও অ্যাপ</h3>
+<p>ভিডিও দেখুন এবং উপভোগ করুন!</p>
+<video controls></video>
+<p>আপনার ভিডিও এখানে চলবে</p>
+</div>
+<div class="card">
+<h3>স্বাগতম PENGUIN-এ</h3>
+<p>এটি আপনার ভিডিও অ্যাপের প্রথম সংস্করণ।</p>
+</div>
+</body>
+</html>
