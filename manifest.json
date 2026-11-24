@@ -1,0 +1,17 @@
+{
+  "name": "PENGUIN PRO",
+  "short_name": "PENGUIN",
+  "start_url": "/panguin-/index.html",
+  "scope": "/panguin-/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "https://flaticon.com",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
