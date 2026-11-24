@@ -1,53 +1,130 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PENGUIN</title>
+<title>PENGUIN - Media Hub</title>
 <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; background: #101010; color: #ffffff; font-family: Arial, sans-serif; }
-  header { background: #171717; padding: 18px; font-size: 24px; font-weight: bold; color: #00d9ff; display: flex; align-items: center; gap: 8px; }
-  .search { padding: 12px; }
-  input { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 15px; margin-bottom: 10px; outline: none; }
-  .card { background: #1e1e1e; margin: 12px; padding: 14px; border-radius: 12px; }
-  .video-box { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000000; }
-  .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-  button { background: #00d9ff; color: #000000; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
-  h3 { margin-top: 0; font-size: 18px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #121212; color: #ffffff; font-family: Arial, sans-serif; padding-bottom: 70px; }
+  
+  /* Top Header - SnapTube Red & Dark Style */
+  header { background: #ff2a2a; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-size: 22px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; }
+  
+  /* Search Box */
+  .search-area { background: #1c1c1c; padding: 10px 14px; }
+  .search-area input { width: 100%; padding: 11px 14px; border-radius: 25px; border: none; background: #2c2c2c; color: #fff; font-size: 14px; outline: none; }
+
+  /* Category Tabs */
+  .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px; background: #181818; border-bottom: 1px solid #2a2a2a; }
+  .tab { background: #2a2a2a; color: #ddd; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer; }
+  .tab.active { background: #ff2a2a; color: #fff; font-weight: bold; }
+
+  /* Cards */
+  .card { background: #1e1e1e; margin: 12px; padding: 14px; border-radius: 12px; border: 1px solid #2b2b2b; }
+  .card h3 { font-size: 16px; margin-bottom: 10px; color: #f1f1f1; }
+  .link-input { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid #333; background: #121212; color: #fff; font-size: 14px; margin-bottom: 10px; outline: none; }
+  .btn-red { background: #ff2a2a; color: #fff; border: none; padding: 11px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; }
+  .btn-red:active { opacity: 0.85; }
+
+  /* Video Player */
+  .video-box { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000; }
+  .video-box iframe, video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 10px; }
+
+  /* Bottom Navigation */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #2c2c2c; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
+  .nav-item { color: #aaa; text-align: center; font-size: 12px; cursor: pointer; background: none; border: none; }
+  .nav-item.active { color: #ff2a2a; font-weight: bold; }
+  .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+  
+  .hidden { display: none; }
 </style>
 </head>
 <body>
 
-<header>🐧 PENGUIN</header>
+<header>
+  <div class="logo">🐧 PENGUIN <span style="font-size:12px;background:#000;padding:2px 6px;border-radius:4px;">PRO</span></div>
+</header>
 
-<div class="search">
-  <input type="text" id="searchInput" onkeyup="searchVideo()" placeholder="ভিডিওর নাম লিখে খুঁজুন...">
+<div class="search-area">
+  <input type="text" id="searchInput" onkeyup="searchVideo()" placeholder="🔍 ভিডিও বা গান খুঁজুন...">
 </div>
 
-<div class="card">
-  <h3>▶️ ইউটিউব লিংক দিয়ে ভিডিও চালান</h3>
-  <input type="text" id="ytLink" placeholder="YouTube বা Shorts লিংক এখানে পেস্ট করুন...">
-  <button onclick="addYoutubeVideo()">অ্যাপের ভেতরেই চালান</button>
+<div class="tabs">
+  <button class="tab active" onclick="filterCategory('all', this)">🔥 সব ভিডিও</button>
+  <button class="tab" onclick="filterCategory('music', this)">🎵 গান</button>
+  <button class="tab" onclick="filterCategory('nature', this)">🌍 প্রকৃতি</button>
+  <button class="tab" onclick="filterCategory('shorts', this)">⚡ Shorts</button>
 </div>
 
-<div id="videoList">
-  <div class="card video-item">
-    <h3>ডেমো ভিডিও ১ (Nature 4K)</h3>
-    <div class="video-box">
-      <iframe src="https://youtube-nocookie.com" allowfullscreen></iframe>
-    </div>
+<!-- Home Section -->
+<div id="homeSection">
+  <div class="card">
+    <h3>▶️ লিংক পেস্ট করে সরাসরি চালান</h3>
+    <input type="text" id="ytLink" class="link-input" placeholder="YouTube ভিডিও বা Shorts লিংক দিন...">
+    <button class="btn-red" onclick="addYoutubeVideo()">▶ প্লে করুন</button>
   </div>
 
-  <div class="card video-item">
-    <h3>ডেমো ভিডিও ২ (Scenic View)</h3>
-    <div class="video-box">
-      <iframe src="https://youtube-nocookie.com" allowfullscreen></iframe>
+  <div id="videoList"></div>
+</div>
+
+<!-- Offline / Gallery Player Section -->
+<div id="filesSection" class="hidden">
+  <div class="card">
+    <h3>📂 ফোনের গ্যালারি থেকে ভিডিও চালান</h3>
+    <p style="font-size:13px;color:#aaa;margin-bottom:12px;">আপনার ফোনে সেভ থাকা যেকোনো ভিডিও বা গান অফলাইনে চালান:</p>
+    <label class="btn-red" style="display:block;text-align:center;">
+      + ফোন থেকে ভিডিও বেছে নিন
+      <input type="file" accept="video/*,audio/*" style="display:none" onchange="playLocalFile(event)">
+    </label>
+    <div id="localBox" class="video-box hidden" style="margin-top:12px;">
+      <video id="localPlayer" controls></video>
     </div>
   </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="navHome" onclick="switchTab('home')">
+    <span class="nav-icon">🏠</span>হোম
+  </button>
+  <button class="nav-item" id="navFiles" onclick="switchTab('files')">
+    <span class="nav-icon">📁</span>আমার ফাইল
+  </button>
 </div>
 
 <script>
+  function makeEmbedUrl(id, auto) {
+    var p = "https:" + "//";
+    var d = "www.youtube" + "-nocookie.com";
+    var f = "/embed/";
+    return p + d + f + id + (auto ? "?autoplay=1" : "");
+  }
+
+  function createVideoCard(title, videoId, category, auto) {
+    var list = document.getElementById("videoList");
+    var card = document.createElement("div");
+    card.className = "card video-item";
+    card.setAttribute("data-cat", category);
+
+    var h3 = document.createElement("h3");
+    h3.innerText = title;
+
+    var box = document.createElement("div");
+    box.className = "video-box";
+
+    var iframe = document.createElement("iframe");
+    iframe.src = makeEmbedUrl(videoId, auto);
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+
+    box.appendChild(iframe);
+    card.appendChild(h3);
+    card.appendChild(box);
+    list.prepend(card);
+  }
+
   function getYoutubeId(url) {
     var pos = -1;
     if (url.indexOf("youtu.be/") !== -1) {
@@ -68,21 +145,12 @@
   function addYoutubeVideo() {
     var url = document.getElementById("ytLink").value.trim();
     var videoId = getYoutubeId(url);
-
     if (videoId.length !== 11) {
       alert("সঠিক YouTube ভিডিও বা Shorts লিংক দিন!");
       return;
     }
-
-    var host = "www.youtube" + "-nocookie.com";
-    var fullSrc = "https://" + host + "/embed/" + videoId + "?autoplay=1";
-
-    var list = document.getElementById("videoList");
-    var newCard = document.createElement("div");
-    newCard.className = "card video-item";
-    newCard.innerHTML = '<h3>আপনার ভিডিও</h3><div class="video-box"><iframe src="' + fullSrc + '" allowfullscreen></iframe></div>';
-
-    list.prepend(newCard);
+    var cat = url.indexOf("/shorts/") !== -1 ? "shorts" : "all";
+    createVideoCard("🎬 আপনার যুক্ত করা ভিডিও", videoId, cat, true);
     document.getElementById("ytLink").value = "";
   }
 
@@ -94,6 +162,50 @@
       card.style.display = title.includes(query) ? "block" : "none";
     });
   }
+
+  function filterCategory(cat, btn) {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
+    btn.classList.add("active");
+    var cards = document.querySelectorAll(".video-item");
+    cards.forEach(function(card) {
+      var itemCat = card.getAttribute("data-cat");
+      if (cat === "all" || itemCat === cat) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  function switchTab(tab) {
+    if (tab === "home") {
+      document.getElementById("homeSection").classList.remove("hidden");
+      document.getElementById("filesSection").classList.add("hidden");
+      document.getElementById("navHome").classList.add("active");
+      document.getElementById("navFiles").classList.remove("active");
+    } else {
+      document.getElementById("homeSection").classList.add("hidden");
+      document.getElementById("filesSection").classList.remove("hidden");
+      document.getElementById("navHome").classList.remove("active");
+      document.getElementById("navFiles").classList.add("active");
+    }
+  }
+
+  function playLocalFile(event) {
+    var file = event.target.files.item(0);
+    if (file) {
+      var box = document.getElementById("localBox");
+      var player = document.getElementById("localPlayer");
+      player.src = URL.createObjectURL(file);
+      box.classList.remove("hidden");
+      player.play();
+    }
+  }
+
+  // Default Videos
+  createVideoCard("🎵 লফাই মিউজিক (Chill Beats)", "jfKfPfyJRdk", "music", false);
+  createVideoCard("🌍 প্রকৃতির দৃশ্য (4K Nature)", "LXb3EKWsInQ", "nature", false);
+  createVideoCard("⚡ 3D অ্যানিমেশন শর্ট ফিল্ম", "aqz-KE-bpKQ", "shorts", false);
 </script>
 
 </body>
