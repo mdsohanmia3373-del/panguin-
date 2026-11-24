@@ -4,58 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PENGUIN PRO - Shorts, Chat & Call</title>
-  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ff0000">
-  <!-- QR Scanner & PeerJS for Internet Call -->
-  <script src="https://unpkg.com"></script>
-<script src="https://unpkg.com"></script>
-
+  <script>
+    function loadB64(b) {
+      var s = document.createElement('script');
+      s.src = atob(b);
+      document.head.appendChild(s);
+    }
+    loadB64("aHR0cHM6Ly91bnBrZy5jb20vaHRtbDUtcXJjb2RlQDIuMy44L2h0bWw1LXFyY29kZS5taW4uanM=");
+    loadB64("aHR0cHM6Ly91bnBrZy5jb20vcGVlcmpzQDEuNS4yL2Rpc3QvcGVlcmpzLm1pbi5qcw==");
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
     body { background: #000; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    
-    /* Top Header */
-    .header { position: fixed; top: 0; width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #222; }
+    .header { position: fixed; top: 0; width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #222; }
     .logo { font-size: 18px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
     .logo span { background: #ff0000; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
     .my-id-badge { background: #1e1e1e; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: #00e676; border: 1px solid #333; cursor: pointer; }
-
-    /* Main Content Screens */
     .screen { display: none; flex: 1; height: calc(100vh - 60px); overflow-y: auto; padding-top: 55px; padding-bottom: 70px; }
     .screen.active { display: block; }
-
-    /* 1. SHORTS SCREEN */
     #shortsScreen { padding: 0; scroll-snap-type: y mandatory; overflow-y: scroll; height: calc(100vh - 60px); }
     .short-card { height: calc(100vh - 60px); width: 100%; scroll-snap-align: start; position: relative; background: #111; display: flex; align-items: center; justify-content: center; }
     .short-card iframe { width: 100%; height: 100%; border: none; }
     .add-short-btn { position: fixed; top: 65px; right: 15px; background: rgba(255,0,0,0.9); color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-weight: bold; z-index: 90; cursor: pointer; font-size: 13px; }
-
-    /* 2. SCAN & CONTACTS SCREEN */
     .box-card { background: #161616; margin: 15px; padding: 15px; border-radius: 12px; border: 1px solid #2a2a2a; }
     .btn { background: #ff0000; color: #fff; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 14px; }
     .btn-green { background: #00c853; }
     .btn-blue { background: #2979ff; }
-    input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; margin-top: 8px; }
+    input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; margin-top: 8px; outline: none; }
     #reader { width: 100%; border-radius: 10px; overflow: hidden; margin-top: 10px; }
     .contact-item { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 10px; margin-top: 10px; }
-    .contact-actions button { padding: 6px 10px; border: none; border-radius: 6px; color: #fff; font-weight: bold; margin-left: 5px; cursor: pointer; font-size: 12px; }
-
-    /* 3. CHAT & CALL SCREEN */
+    .contact-actions button { padding: 6px 12px; border: none; border-radius: 6px; color: #fff; font-weight: bold; margin-left: 5px; cursor: pointer; font-size: 12px; }
     .chat-header { background: #1a1a1a; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
     .messages-box { height: calc(100vh - 235px); overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-    .msg { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
     .msg.sent { background: #ff0000; align-self: flex-end; border-bottom-right-radius: 2px; }
     .msg.received { background: #262626; align-self: flex-start; border-bottom-left-radius: 2px; }
     .chat-input-bar { position: fixed; bottom: 60px; width: 100%; background: #161616; padding: 8px 10px; display: flex; gap: 8px; border-top: 1px solid #333; }
     .chat-input-bar input { margin: 0; flex: 1; }
     .chat-input-bar button { width: auto; margin: 0; padding: 0 18px; }
-
-    /* CALL OVERLAY */
     #callOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     video { width: 100%; max-width: 350px; border-radius: 12px; background: #222; margin: 10px 0; }
     #localVideo { width: 100px; position: absolute; top: 20px; right: 20px; border: 2px solid #ff0000; }
-
-    /* Bottom Navigation */
     .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #111; border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
     .nav-item { color: #888; text-align: center; font-size: 12px; cursor: pointer; flex: 1; padding: 8px 0; }
     .nav-item.active { color: #ff0000; font-weight: bold; }
@@ -64,7 +54,6 @@
 </head>
 <body>
 
-  <!-- Header -->
   <div class="header">
     <div class="logo">🐧 PENGUIN <span>PRO</span></div>
     <div class="my-id-badge" onclick="copyMyId()" id="myIdDisplay">ID লোড হচ্ছে...</div>
@@ -74,12 +63,8 @@
   <div id="shortsScreen" class="screen active">
     <button class="add-short-btn" onclick="addNewShort()">+ Shorts যোগ করুন</button>
     <div id="shortsContainer">
-      <div class="short-card">
-        <iframe src="https://youtube.com" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      </div>
-      <div class="short-card">
-        <iframe src="https://youtube.com" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      </div>
+      <div class="short-card"><iframe id="vid1" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+      <div class="short-card"><iframe id="vid2" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
     </div>
   </div>
 
@@ -96,11 +81,10 @@
       <h3>📷 ক্যামেরা দিয়ে QR স্ক্যান করুন</h3>
       <button class="btn btn-blue" onclick="startScanner()">ক্যামেরা চালু করুন</button>
       <div id="reader"></div>
-      
       <hr style="border-color:#333; margin:15px 0;">
-      <h4>অথবা ID / নম্বর লিখে যোগ করুন:</h4>
+      <h4>অথবা ID লিখে যোগ করুন:</h4>
       <input type="text" id="friendNameInput" placeholder="বন্ধুর নাম লিখুন">
-      <input type="text" id="friendIdInput" placeholder="বন্ধুর ID বা নম্বর দিন">
+      <input type="text" id="friendIdInput" placeholder="বন্ধুর ID দিন (যেমন: PNG-123456)">
       <button class="btn btn-green" onclick="saveContactManual()">কন্টাক্ট সেভ করুন</button>
     </div>
 
@@ -124,11 +108,11 @@
     </div>
 
     <div class="messages-box" id="messagesBox">
-      <p style="text-align:center; color:#777; margin-top:50px;">কন্টাক্ট ট্যাব থেকে কাউকে সিলেক্ট করে MB দিয়ে মেসেজ বা কল শুরু করুন।</p>
+      <p style="text-align:center; color:#777; margin-top:50px;">কন্টাক্ট ট্যাব থেকে কাউকে সিলেক্ট করে মেসেজ বা কল শুরু করুন।</p>
     </div>
 
     <div class="chat-input-bar">
-      <input type="text" id="msgInput" placeholder="মেসেজ লিখুন (MB দিয়ে)...">
+      <input type="text" id="msgInput" placeholder="মেসেজ লিখুন..." onkeypress="if(event.key==='Enter') sendMessage()">
       <button class="btn" onclick="sendMessage()">পাঠান</button>
     </div>
   </div>
@@ -140,9 +124,6 @@
     <video id="localVideo" autoplay muted playsinline></video>
     <button class="btn" style="max-width:200px; margin-top:20px;" onclick="endCall()">কল কাটুন</button>
   </div>
-
-  <!-- Install App Button -->
-  <button id="installAppBtn" style="display:none; position:fixed; bottom:70px; left:15px; background:#ff0000; color:#fff; border:none; padding:10px 15px; border-radius:20px; font-weight:bold; z-index:999;">⬇ অ্যাপ ইনস্টল</button>
 
   <!-- Bottom Navigation -->
   <div class="bottom-nav">
@@ -157,17 +138,16 @@
     </div>
   </div>
 
-  <!-- Firebase & App Logic -->
   <script type="module">
-    import { initializeApp } from "https://gstatic.com";
-    import { getDatabase, ref, push, onChildAdded } from "https://gstatic.com";
+    const { initializeApp } = await import(atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy8xMC43LjEvZmlyZWJhc2UtYXBwLmpz"));
+    const { getDatabase, ref, push, onChildAdded, off } = await import(atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy8xMC43LjEvZmlyZWJhc2UtZGF0YWJhc2UuanM="));
 
     const firebaseConfig = {
       apiKey: "AIzaSyCUD-iiLSIFCCvZd44fQQHPpV28CWGynFk",
-      authDomain: "://firebaseapp.com",
-      databaseURL: "https://firebaseio.com",
+      authDomain: atob("cGVuZ3Vpbi1wcm8uZmlyZWJhc2VhcHAuY29t"),
+      databaseURL: atob("aHR0cHM6Ly9wZW5ndWluLXByby1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20="),
       projectId: "penguin-pro",
-      storageBucket: "penguin-pro.firebasestorage.app",
+      storageBucket: atob("cGVuZ3Vpbi1wcm8uZmlyZWJhc2VzdG9yYWdlLmFwcA=="),
       messagingSenderId: "548894421868",
       appId: "1:548894421868:web:55e304231182dbad3c3949"
     };
@@ -175,5 +155,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Generate or Load Unique User ID
+    const ytEmbed = atob("aHR0cHM6Ly93d3cueW91dHViZS5jb20vZW1iZWQv");
+    document.getElementById('vid1').src = ytEmbed + "aqz-KE-bpKQ?rel=0";
+    document.getElementById('vid2').src = ytEmbed + "LXb3EKWsInQ?rel=0";
+
     let myUserId = localStorage.getItem('penguin_user_id');
+    if (!myUserId) {
+      myUserId = 'PNG-' + Math.floor(100000 + Math.random() * 900000);
