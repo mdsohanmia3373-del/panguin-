@@ -138,27 +138,30 @@
     </div>
   </div>
 
-  <script type="module">
-    const { initializeApp } = await import(atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy8xMC43LjEvZmlyZWJhc2UtYXBwLmpz"));
-    const { getDatabase, ref, push, onChildAdded, off } = await import(atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy8xMC43LjEvZmlyZWJhc2UtZGF0YWJhc2UuanM="));
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCUD-iiLSIFCCvZd44fQQHPpV28CWGynFk",
-      authDomain: atob("cGVuZ3Vpbi1wcm8uZmlyZWJhc2VhcHAuY29t"),
-      databaseURL: atob("aHR0cHM6Ly9wZW5ndWluLXByby1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20="),
-      projectId: "penguin-pro",
-      storageBucket: atob("cGVuZ3Vpbi1wcm8uZmlyZWJhc2VzdG9yYWdlLmFwcA=="),
-      messagingSenderId: "548894421868",
-      appId: "1:548894421868:web:55e304231182dbad3c3949"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const ytEmbed = atob("aHR0cHM6Ly93d3cueW91dHViZS5jb20vZW1iZWQv");
+  <script>
+    // 1. Instant UI & ID Load (Runs immediately without waiting for network)
+    var ytEmbed = atob("aHR0cHM6Ly93d3cueW91dHViZS5jb20vZW1iZWQv");
     document.getElementById('vid1').src = ytEmbed + "aqz-KE-bpKQ?rel=0";
     document.getElementById('vid2').src = ytEmbed + "LXb3EKWsInQ?rel=0";
 
-    let myUserId = localStorage.getItem('penguin_user_id');
+    var myUserId = localStorage.getItem('penguin_user_id');
     if (!myUserId) {
       myUserId = 'PNG-' + Math.floor(100000 + Math.random() * 900000);
+      localStorage.setItem('penguin_user_id', myUserId);
+    }
+
+    document.getElementById('myIdDisplay').innerText = 'ID: ' + myUserId + ' 📋';
+    document.getElementById('fullIdText').innerText = myUserId;
+    document.getElementById('myQrImg').src = atob("aHR0cHM6Ly9hcGkucXJzZXJ2ZXIuY29tL3YxL2NyZWF0ZS1xci1jb2RlLz9zaXplPTE1MHgxNTAmZGF0YT0=") + myUserId;
+
+    var currentChatUser = null;
+    var localStream = null;
+    var currentCall = null;
+
+    function copyMyId() {
+      navigator.clipboard.writeText(myUserId);
+      alert('আপনার ID কপি হয়েছে: ' + myUserId);
+    }
+
+    function switchTab(screenId, el) {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
