@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>penguin• Super App</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e60023">
 <script>
 function ld(b){var s=document.createElement('script');s.src=atob(b);document.head.appendChild(s);}
 ld("aHR0cHM6Ly91bnBrZy5jb20vaHRtbDUtcXJjb2RlQDIuMy44L2h0bWw1LXFyY29kZS5taW4uanM=");
@@ -16,23 +18,22 @@ body{background:#09090b;color:#fff;height:100vh;overflow:hidden;display:flex;fle
 .scr.active{display:block}
 .hero{background:linear-gradient(150deg,#e60023 0%,#a30019 100%);padding:18px 16px 28px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;box-shadow:0 8px 25px rgba(230,0,35,0.35)}
 .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.brand{font-size:24px;font-weight:900;letter-spacing:-0.5px;display:flex;align-items:center;gap:4px}
-.brand-dot{width:8px;height:8px;background:#fff;border-radius:50%;display:inline-block}
-.icon-row{display:flex;gap:10px}
-.ic-btn{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.22);color:#fff;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.prof-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.brand{font-size:24px;font-weight:900;display:flex;align-items:center;gap:4px}
+.brand-dot{width:8px;height:8px;background:#fff;border-radius:50%}
+.icon-row{display:flex;gap:8px}
+.ic-btn{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.22);color:#fff;padding:0 10px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;cursor:pointer}
+.prof-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .prof-info{display:flex;align-items:center;gap:12px}
 .av{width:54px;height:54px;border-radius:50%;background:#fff;color:#e60023;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2.5px solid #fff;cursor:pointer}
 .av img{width:100%;height:100%;object-fit:cover}
 .pill-btn{background:rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
-.bal-card{background:rgba(0,0,0,0.24);backdrop-filter:blur(8px);padding:14px 16px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,0.14)}
+.bal-card{background:rgba(0,0,0,0.24);padding:14px 16px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,0.14)}
 .white-btn{background:#fff;color:#e60023;border:none;padding:9px 16px;border-radius:22px;font-weight:700;font-size:12px;cursor:pointer}
 .q-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 14px 6px}
 .q-item{background:#141418;padding:14px 8px;border-radius:16px;text-align:center;border:1px solid #23232a;cursor:pointer}
 .q-ic{width:40px;height:40px;margin:0 auto 8px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-.q-item b{font-size:12px;display:block;color:#f4f4f6}
+.q-item b{font-size:12px;display:block}
 .q-item small{font-size:10px;color:#8e8e98}
-.promo-card{margin:12px 14px;background:linear-gradient(135deg,#1e1633 0%,#131318 100%);border:1px solid #3a295e;border-radius:18px;padding:18px;text-align:center}
 .card{background:#141418;margin:12px 14px;padding:16px;border-radius:18px;border:1px solid #23232a}
 .btn-main{background:linear-gradient(90deg,#e60023,#ff1e42);color:#fff;border:none;padding:13px;border-radius:14px;font-weight:700;width:100%;margin-top:10px;cursor:pointer;font-size:14px}
 input{width:100%;padding:12px 14px;background:#1d1d24;border:1px solid #30303a;color:#fff;border-radius:12px;margin-top:8px;outline:none;font-size:14px}
@@ -41,9 +42,16 @@ input{width:100%;padding:12px 14px;background:#1d1d24;border:1px solid #30303a;c
 .v-card video{width:100%;height:100%;object-fit:cover}
 .wm{position:absolute;top:16px;left:14px;background:rgba(0,0,0,0.55);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,0.2)}
 .outro{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.92);flex-direction:column;align-items:center;justify-content:center;z-index:10;text-align:center}
-.v-meta{position:absolute;bottom:20px;left:15px;right:70px;text-shadow:0 2px 6px #000}
-.v-side{position:absolute;right:12px;bottom:25px;display:flex;flex-direction:column;gap:14px}
-.s-btn{background:rgba(255,255,255,0.18);backdrop-filter:blur(6px);border:none;color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.v-meta{position:absolute;bottom:22px;left:15px;right:75px;text-shadow:0 2px 6px #000}
+.v-side{position:absolute;right:12px;bottom:25px;display:flex;flex-direction:column;gap:14px;align-items:center;z-index:6}
+.s-btn{background:rgba(20,20,25,0.75);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.15);color:#fff;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.s-lbl{font-size:11px;font-weight:700;margin-top:-10px;text-shadow:0 1px 3px #000}
+.cmt-drawer{display:none;position:fixed;bottom:65px;left:0;right:0;height:55vh;background:#16161b;border-top-left-radius:22px;border-top-right-radius:22px;z-index:200;flex-direction:column;border-top:1px solid #2e2e38}
+.cmt-hdr{padding:12px 16px;border-bottom:1px solid #26262e;display:flex;justify-content:space-between;align-items:center;font-weight:bold}
+.cmt-list{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.cmt-item{background:#202028;padding:10px 12px;border-radius:12px;font-size:13px}
+.cmt-bar{padding:8px 12px;display:flex;gap:8px;border-top:1px solid #26262e;background:#121216}
+.cmt-bar input{margin:0;flex:1}
 .c-row{display:flex;justify-content:space-between;align-items:center;background:#1c1c22;padding:12px;border-radius:14px;margin-top:10px;border:1px solid #2b2b34}
 .c-act button{border:none;padding:8px 12px;border-radius:10px;color:#fff;margin-left:5px;cursor:pointer;font-size:12px;font-weight:700}
 .chat-hdr{background:#141418;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #23232a}
@@ -69,8 +77,8 @@ svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
     <div class="top-bar">
       <div class="brand">penguin<span class="brand-dot"></span></div>
       <div class="icon-row">
+        <button class="ic-btn" id="instBtn" onclick="installApp()">⬇ অ্যাপ ইনস্টল</button>
         <button class="ic-btn" onclick="goTab('contactScr',3);scanQR()"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg></button>
-        <button class="ic-btn" onclick="goTab('feedScr',1)"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
       </div>
     </div>
     <div class="prof-box">
@@ -90,22 +98,39 @@ svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
     <div class="q-item" onclick="goTab('uploadScr',2)"><div class="q-ic" style="background:#00c85322;color:#00e676"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><b>আপলোড</b><small>ভিডিও ছাড়ুন</small></div>
     <div class="q-item" onclick="startLive()"><div class="q-ic" style="background:#2979ff22;color:#448aff"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg></div><b>লাইভ ভিডিও</b><small>Go Live</small></div>
   </div>
-  <div class="promo-card">
-    <h3 style="color:#ffd54f;font-size:16px">PENGUIN সুপার নেটওয়ার্ক ⭐</h3>
-    <p style="font-size:12px;color:#bbb;margin:6px 0 14px">ফ্রি চ্যাট, ছবি আদান-প্রদান ও এইচডি ভিডিও কল করুন</p>
-    <button class="btn-main" style="max-width:190px;margin:0 auto;border-radius:22px" onclick="goTab('contactScr',3)">বন্ধু যোগ করুন</button>
+  <div class="card">
+    <h3 style="font-size:15px">🔴 চলমান লাইভ স্ট্রিম</h3>
+    <div id="liveList"><p style="color:#777;font-size:12px;margin-top:8px">বর্তমানে কেউ লাইভে নেই</p></div>
   </div>
-  <div class="card"><h3 style="font-size:15px">🔴 চলমান লাইভ স্ট্রিম</h3><div id="liveList"><p style="color:#777;font-size:12px;margin-top:8px">বর্তমানে কেউ লাইভে নেই</p></div></div>
 </div>
+
 <div id="feedScr" class="scr"><div id="feedList"></div></div>
+
+<div id="cmtDrawer" class="cmt-drawer">
+  <div class="cmt-hdr"><span>💬 কমেন্টসমূহ</span><button onclick="closeCmt()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer">✕</button></div>
+  <div class="cmt-list" id="cmtList"></div>
+  <div class="cmt-bar">
+    <input id="cmtInput" placeholder="আপনার কমেন্ট লিখুন...">
+    <button class="btn-main" style="width:auto;margin:0;padding:10px 16px" onclick="postCmt()">পোস্ট</button>
+  </div>
+</div>
+
 <div id="uploadScr" class="scr">
   <div class="card">
-    <h3>📤 গ্যালারি থেকে ভিডিও আপলোড</h3>
-    <p style="font-size:12px;color:#999;margin:6px 0 12px">আপনার ভিডিওর ওপর ও শেষে penguin• ব্র্যান্ড ওয়াটারমার্ক যুক্ত হবে</p>
-    <input id="vidCap" placeholder="ভিডিওর ক্যাপশন লিখুন...">
-    <label class="btn-main" style="display:block;text-align:center">📁 গ্যালারি থেকে ভিডিও বেছে নিন<input type="file" accept="video/*" style="display:none" onchange="postVideo(event)"></label>
+    <h3>🎬 TikTok স্টাইল ভিডিও আপলোড</h3>
+    <p style="font-size:12px;color:#999;margin:6px 0 12px">গ্যালারি থেকে ভিডিও সিলেক্ট করে প্রিভিউ দেখুন এবং পোস্ট করুন</p>
+    <label class="btn-main" style="display:block;text-align:center;background:#2979ff">
+      📁 গ্যালারি থেকে ভিডিও বেছে নিন
+      <input type="file" accept="video/*" style="display:none" onchange="previewUpload(event)">
+    </label>
+    <div id="upPreviewBox" style="display:none;margin-top:14px">
+      <video id="upPreviewVid" controls style="width:100%;max-height:300px;border-radius:14px;background:#000"></video>
+      <input id="vidCap" placeholder="ভিডিওর ক্যাপশন বা হ্যাশট্যাগ লিখুন...">
+      <button class="btn-main" onclick="publishVideo()">🚀 ফিডে পোস্ট করুন</button>
+    </div>
   </div>
 </div>
+
 <div id="contactScr" class="scr">
   <div class="card" style="text-align:center"><h3>আপনার PENGUIN QR কোড</h3><img id="qrImg" style="width:140px;height:140px;margin:10px auto;background:#fff;padding:6px;border-radius:14px"><p id="fullId" style="color:#00e676;font-weight:bold"></p></div>
   <div class="card">
@@ -116,6 +141,7 @@ svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
   </div>
   <div class="card"><h3>👥 সেভ করা বন্ধুদের তালিকা</h3><div id="cList"></div></div>
 </div>
+
 <div id="chatScr" class="scr">
   <div class="chat-hdr">
     <div><strong id="chatName">বন্ধু সিলেক্ট করুন</strong><div id="chatId" style="font-size:11px;color:#00e676"></div></div>
@@ -131,8 +157,10 @@ svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
     <button class="btn-main" style="width:auto;margin:0;padding:11px 18px" onclick="sendMsg()">পাঠান</button>
   </div>
 </div>
+
 <div id="callModal"><h3 id="callStat" style="margin-bottom:10px">কল হচ্ছে...</h3><video id="remVid" class="stream-v" autoplay playsinline></video><video id="locVid" autoplay muted playsinline></video><button class="btn-main" style="max-width:180px;margin-top:15px" onclick="endCall()">কল কাটুন</button></div>
 <div id="liveModal"><h3 id="liveTitle" style="margin-bottom:10px;color:#e60023">🔴 LIVE চলছে</h3><video id="liveVid" class="stream-v" autoplay playsinline></video><button class="btn-main" style="max-width:180px;margin-top:15px" onclick="stopLive()">লাইভ বন্ধ করুন</button></div>
+
 <div class="nav">
   <div class="nav-it active" onclick="goTab('homeScr',0)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>হোম</div>
   <div class="nav-it" onclick="goTab('feedScr',1)"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>ভিডিও</div>
@@ -141,6 +169,14 @@ svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-l
   <div class="nav-it" onclick="goTab('chatScr',4)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>চ্যাট</div>
 </div>
 <script>
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+var defPrompt = null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); defPrompt = e; });
+function installApp(){
+  if(defPrompt){ defPrompt.prompt(); defPrompt = null; }
+  else { alert('অ্যাপটি ইনস্টল করতে Google Chrome ব্রাউজারের উপরে ডানপাশের তিন ডট (⋮) মেনুতে ক্লিক করে "Add to Home screen" বা "Install app" চাপুন।'); }
+}
+
 var uid = localStorage.getItem('p_uid');
 if(!uid){ uid = 'PNG-' + Math.floor(100000 + Math.random()*900000); localStorage.setItem('p_uid', uid); }
 var uName = localStorage.getItem('p_uname') || 'PENGUIN USER';
@@ -155,19 +191,82 @@ if(uAv) document.getElementById('avBox').innerHTML = '<img src="'+uAv+'"><input 
 function editName(){ var n = prompt('আপনার নতুন নাম লিখুন:', uName); if(n && n.trim()){ uName = n.trim(); localStorage.setItem('p_uname', uName); document.getElementById('uName').innerText = uName; } }
 function setAv(e){ var f = e.target.files.item(0); if(!f) return; var r = new FileReader(); r.onload = function(){ localStorage.setItem('p_uav', r.result); document.getElementById('avBox').innerHTML = '<img src="'+r.result+'"><input type="file" accept="image/*" style="display:none" onchange="setAv(event)">'; }; r.readAsDataURL(f); }
 function copyId(){ navigator.clipboard.writeText(uid); alert('আপনার ID কপি হয়েছে: ' + uid); }
-function goTab(id, idx){ document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-it').forEach(n=>n.classList.remove('active')); document.getElementById(id).classList.add('active'); if(document.querySelectorAll('.nav-it').item(idx)) document.querySelectorAll('.nav-it').item(idx).classList.add('active'); }
+function goTab(id, idx){ document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-it').forEach(n=>n.classList.remove('active')); document.getElementById(id).classList.add('active'); if(document.querySelectorAll('.nav-it').item(idx)) document.querySelectorAll('.nav-it').item(idx).classList.add('active'); closeCmt(); }
 
-function addVideoToFeed(src, title, author){
+// Facebook/TikTok Style Like, Comment, Share & Upload
+var activeVidId = null;
+var vidComments = JSON.parse(localStorage.getItem('p_cmts') || '{}');
+
+function addVideoToFeed(vidId, src, title, author, likes){
   var list = document.getElementById('feedList'), card = document.createElement('div'); card.className = 'v-card';
-  card.innerHTML = `<div class="wm">penguin• PRO</div><video src="${src}" playsinline loop onclick="this.paused?this.play():this.pause()"></video><div class="outro"><h1 style="font-size:34px;color:#e60023;font-weight:900">penguin•</h1><p style="color:#fff;margin-top:6px;font-weight:bold">@${author}</p></div><div class="v-meta"><strong>@${author}</strong><p style="font-size:13px;margin-top:4px">${title}</p></div><div class="v-side"><button class="s-btn" onclick="this.style.color='#e60023'">❤️</button><button class="s-btn" onclick="copyId()">🔗</button></div>`;
+  var cCount = (vidComments[vidId] || []).length;
+  card.innerHTML = `<div class="wm">penguin• PRO</div><video src="${src}" playsinline loop onclick="this.paused?this.play():this.pause()"></video><div class="outro"><h1 style="font-size:34px;color:#e60023;font-weight:900">penguin•</h1><p style="color:#fff;margin-top:6px;font-weight:bold">@${author}</p></div><div class="v-meta"><strong>@${author}</strong><p style="font-size:13px;margin-top:4px">${title}</p></div><div class="v-side"><button class="s-btn" onclick="likeVid(this,'lk_${vidId}')">❤️</button><span class="s-lbl" id="lk_${vidId}">${likes}</span><button class="s-btn" onclick="openCmt('${vidId}')">💬</button><span class="s-lbl" id="cc_${vidId}">${cCount}</span><button class="s-btn" onclick="shareVid('${title}')">🔗</button><span class="s-lbl">শেয়ার</span></div>`;
   var vid = card.querySelector('video'), outro = card.querySelector('.outro');
   vid.addEventListener('timeupdate', function(){ if(vid.duration && vid.currentTime >= vid.duration - 0.8){ outro.style.display='flex'; setTimeout(()=>outro.style.display='none', 1500); } });
   list.prepend(card);
 }
-var sBase = atob("aHR0cHM6Ly9jb21tb25kYXRhc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9ndHYtdmlkZW9zLWJ1Y2tldC9zYW1wbGUv");
-addVideoToFeed(sBase + "ForBiggerBlazes.mp4", "PENGUIN অফিশিয়াল স্টাইল ভিডিও", "PENGUIN_PRO");
-function postVideo(e){ var file = e.target.files.item(0); if(!file) return alert('ভিডিও সিলেক্ট হয়নি!'); var title = document.getElementById('vidCap').value.trim() || "আমার নতুন ভিডিও"; addVideoToFeed(URL.createObjectURL(file), title, uName); document.getElementById('vidCap').value = ''; goTab('feedScr', 1); var first = document.querySelector('#feedList video'); if(first) first.play(); }
 
+function likeVid(btn, lblId){
+  var lbl = document.getElementById(lblId);
+  var liked = btn.getAttribute('data-lk') === '1';
+  btn.setAttribute('data-lk', liked ? '0' : '1');
+  btn.style.background = liked ? 'rgba(20,20,25,0.75)' : '#e60023';
+  lbl.innerText = parseInt(lbl.innerText) + (liked ? -1 : 1);
+}
+
+function openCmt(vidId){
+  activeVidId = vidId;
+  document.getElementById('cmtDrawer').style.display = 'flex';
+  renderCmts();
+}
+function closeCmt(){ document.getElementById('cmtDrawer').style.display = 'none'; }
+function renderCmts(){
+  var box = document.getElementById('cmtList');
+  var arr = vidComments[activeVidId] || [];
+  box.innerHTML = arr.length ? '' : '<p style="color:#777;font-size:13px;text-align:center;margin-top:20px">এখনো কোনো কমেন্ট নেই। প্রথম কমেন্ট করুন!</p>';
+  arr.forEach(c=>{ box.innerHTML += `<div class="cmt-item"><strong style="color:#ff2a4b;font-size:12px">${c.u}</strong><p style="margin-top:3px">${c.t}</p></div>`; });
+}
+function postCmt(){
+  var inp = document.getElementById('cmtInput'), txt = inp.value.trim();
+  if(!txt || !activeVidId) return;
+  if(!vidComments[activeVidId]) vidComments[activeVidId] = [];
+  vidComments[activeVidId].push({u: uName, t: txt});
+  localStorage.setItem('p_cmts', JSON.stringify(vidComments));
+  inp.value = '';
+  renderCmts();
+  var cc = document.getElementById('cc_' + activeVidId);
+  if(cc) cc.innerText = vidComments[activeVidId].length;
+}
+function shareVid(t){
+  var link = location.href;
+  if(navigator.share){ navigator.share({title: 'penguin• Video', text: t, url: link}); }
+  else { navigator.clipboard.writeText(link); alert('ভিডিও লিংক কপি হয়েছে! বন্ধুদের শেয়ার করুন।'); }
+}
+
+var sBase = atob("aHR0cHM6Ly9jb21tb25kYXRhc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9ndHYtdmlkZW9zLWJ1Y2tldC9zYW1wbGUv");
+addVideoToFeed('def1', sBase + "ForBiggerBlazes.mp4", "PENGUIN অফিশিয়াল স্টাইল ভিডিও 🔥", "PENGUIN_PRO", 124);
+
+var selectedVidUrl = null;
+function previewUpload(e){
+  var file = e.target.files.item(0);
+  if(!file) return;
+  selectedVidUrl = URL.createObjectURL(file);
+  document.getElementById('upPreviewVid').src = selectedVidUrl;
+  document.getElementById('upPreviewBox').style.display = 'block';
+}
+function publishVideo(){
+  if(!selectedVidUrl) return alert('আগে গ্যালারি থেকে একটি ভিডিও সিলেক্ট করুন!');
+  var title = document.getElementById('vidCap').value.trim() || "আমার নতুন ভিডিও 🐧";
+  addVideoToFeed('v_' + Date.now(), selectedVidUrl, title, uName, 1);
+  selectedVidUrl = null;
+  document.getElementById('vidCap').value = '';
+  document.getElementById('upPreviewBox').style.display = 'none';
+  goTab('feedScr', 1);
+  var first = document.querySelector('#feedList video');
+  if(first) first.play();
+}
+</script>
+<script>
 var peerUser = null, lStream = null, curCall = null;
 function saveContact(){ var n = document.getElementById('fName').value.trim(), i = document.getElementById('fId').value.trim(); if(!n || !i) return alert('বন্ধুর নাম ও ID দিন!'); var c = JSON.parse(localStorage.getItem('p_contacts')||'[]'); c.push({n:n, i:i}); localStorage.setItem('p_contacts', JSON.stringify(c)); document.getElementById('fName').value=''; document.getElementById('fId').value=''; showContacts(); alert('কন্টাক্ট সেভ হয়েছে!'); }
 function delContact(idx){ var c = JSON.parse(localStorage.getItem('p_contacts')||'[]'); c.splice(idx, 1); localStorage.setItem('p_contacts', JSON.stringify(c)); showContacts(); }
