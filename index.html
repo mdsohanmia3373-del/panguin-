@@ -6,14 +6,15 @@
 <title>PENGUIN</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#101010;color:white;font-family:Arial, sans-serif}
+  body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
   header{background:#171717;padding:18px;font-size:24px;font-weight:bold;color:#00d9ff;display:flex;align-items:center;gap:8px}
   .search{padding:12px}
-  input{width:100%;padding:12px;border-radius:10px;border:none;font-size:15px;margin-bottom:8px}
+  input{width:100%;padding:12px;border-radius:10px;border:none;font-size:15px;margin-bottom:8px;outline:none}
   .card{background:#1e1e1e;margin:12px;padding:14px;border-radius:12px}
   .video-box{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;background:#000}
   .video-box iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
   button{background:#00d9ff;color:#000;border:none;padding:12px;width:100%;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
+  button:active{opacity:0.8}
   h3{margin-top:0;font-size:18px}
 </style>
 </head>
@@ -48,39 +49,39 @@
 </div>
 
 <script>
-  function extractVideoID(url) {
-    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-    const match = url.match(regExp);
-    return match ? match[1] : null;
+  function getYoutubeId(url) {
+    var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    if (match && match[2].length === 11) {
+      return match[2];
+    }
+    return null;
   }
 
   function addYoutubeVideo() {
-    const url = document.getElementById('ytLink').value.trim();
-    const videoId = extractVideoID(url);
-    
+    var url = document.getElementById('ytLink').value.trim();
+    var videoId = getYoutubeId(url);
+
     if (!videoId) {
-      alert("সঠিক YouTube ভিডিওর লিংক দিন!");
+      alert("সঠিক YouTube বা Shorts ভিডিওর লিংক দিন!");
       return;
     }
 
-    const list = document.getElementById('videoList');
-    const newCard = document.createElement('div');
+    var embedUrl = "https://youtube.com" + videoId + "?autoplay=1";
+    var list = document.getElementById('videoList');
+    var newCard = document.createElement('div');
     newCard.className = 'card video-item';
-    newCard.innerHTML = `
-      <h3>আপনার যুক্ত করা ভিডিও</h3>
-      <div class="video-box">
-        <iframe src="https://youtube.com{videoId}?autoplay=1" allowfullscreen></iframe>
-      </div>
-    `;
+    newCard.innerHTML = '<h3>আপনার যুক্ত করা ভিডিও</h3><div class="video-box"><iframe src="' + embedUrl + '" allowfullscreen></iframe></div>';
+    
     list.prepend(newCard);
     document.getElementById('ytLink').value = '';
   }
 
   function searchVideo() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.querySelectorAll('.video-item');
-    cards.forEach(card => {
-      const title = card.querySelector('h3').innerText.toLowerCase();
+    var query = document.getElementById('searchInput').value.toLowerCase();
+    var cards = document.querySelectorAll('.video-item');
+    cards.forEach(function(card) {
+      var title = card.querySelector('h3').innerText.toLowerCase();
       card.style.display = title.includes(query) ? 'block' : 'none';
     });
   }
