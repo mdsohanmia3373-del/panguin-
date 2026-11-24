@@ -1,243 +1,178 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PENGUIN - Media Hub</title><link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff0000">
- 
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #121212; color: #ffffff; font-family: Arial, sans-serif; padding-bottom: 70px; }
-  
-  /* Top Header - SnapTube Red & Dark Style */
-  header { background: #ff2a2a; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-  .logo { font-size: 22px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; }
-  
-  /* Search Box */
-  .search-area { background: #1c1c1c; padding: 10px 14px; }
-  .search-area input { width: 100%; padding: 11px 14px; border-radius: 25px; border: none; background: #2c2c2c; color: #fff; font-size: 14px; outline: none; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PENGUIN PRO - Shorts, Chat & Call</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff0000">
+  <!-- QR Scanner & PeerJS for Internet Call -->
+  <script src="https://unpkg.com"></script>
+  <script src="https://unpkg.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #000; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    
+    /* Top Header */
+    .header { position: fixed; top: 0; width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #222; }
+    .logo { font-size: 18px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .logo span { background: #ff0000; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    .my-id-badge { background: #1e1e1e; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: #00e676; border: 1px solid #333; cursor: pointer; }
 
-  /* Category Tabs */
-  .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px; background: #181818; border-bottom: 1px solid #2a2a2a; }
-  .tab { background: #2a2a2a; color: #ddd; border: none; padding: 7px 14px; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer; }
-  .tab.active { background: #ff2a2a; color: #fff; font-weight: bold; }
+    /* Main Content Screens */
+    .screen { display: none; flex: 1; height: calc(100vh - 60px); overflow-y: auto; padding-top: 55px; padding-bottom: 70px; }
+    .screen.active { display: block; }
 
-  /* Cards */
-  .card { background: #1e1e1e; margin: 12px; padding: 14px; border-radius: 12px; border: 1px solid #2b2b2b; }
-  .card h3 { font-size: 16px; margin-bottom: 10px; color: #f1f1f1; }
-  .link-input { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid #333; background: #121212; color: #fff; font-size: 14px; margin-bottom: 10px; outline: none; }
-  .btn-red { background: #ff2a2a; color: #fff; border: none; padding: 11px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; }
-  .btn-red:active { opacity: 0.85; }
+    /* 1. SHORTS SCREEN */
+    #shortsScreen { padding: 0; scroll-snap-type: y mandatory; overflow-y: scroll; height: calc(100vh - 60px); }
+    .short-card { height: calc(100vh - 60px); width: 100%; scroll-snap-align: start; position: relative; background: #111; display: flex; align-items: center; justify-content: center; }
+    .short-card iframe { width: 100%; height: 100%; border: none; }
+    .add-short-btn { position: fixed; top: 65px; right: 15px; background: rgba(255,0,0,0.9); color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-weight: bold; z-index: 90; cursor: pointer; font-size: 13px; }
 
-  /* Video Player */
-  .video-box { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000; }
-  .video-box iframe, video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 10px; }
+    /* 2. SCAN & CONTACTS SCREEN */
+    .box-card { background: #161616; margin: 15px; padding: 15px; border-radius: 12px; border: 1px solid #2a2a2a; }
+    .btn { background: #ff0000; color: #fff; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 14px; }
+    .btn-green { background: #00c853; }
+    .btn-blue { background: #2979ff; }
+    input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; margin-top: 8px; }
+    #reader { width: 100%; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+    .contact-item { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 10px; margin-top: 10px; }
+    .contact-actions button { padding: 6px 10px; border: none; border-radius: 6px; color: #fff; font-weight: bold; margin-left: 5px; cursor: pointer; font-size: 12px; }
 
-  /* Bottom Navigation */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #2c2c2c; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-  .nav-item { color: #aaa; text-align: center; font-size: 12px; cursor: pointer; background: none; border: none; }
-  .nav-item.active { color: #ff2a2a; font-weight: bold; }
-  .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
-  
-  .hidden { display: none; }
-</style>
+    /* 3. CHAT & CALL SCREEN */
+    .chat-header { background: #1a1a1a; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .messages-box { height: calc(100vh - 235px); overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
+    .msg.sent { background: #ff0000; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg.received { background: #262626; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .chat-input-bar { position: fixed; bottom: 60px; width: 100%; background: #161616; padding: 8px 10px; display: flex; gap: 8px; border-top: 1px solid #333; }
+    .chat-input-bar input { margin: 0; flex: 1; }
+    .chat-input-bar button { width: auto; margin: 0; padding: 0 18px; }
+
+    /* CALL OVERLAY */
+    #callOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+    video { width: 100%; max-width: 350px; border-radius: 12px; background: #222; margin: 10px 0; }
+    #localVideo { width: 100px; position: absolute; top: 20px; right: 20px; border: 2px solid #ff0000; }
+
+    /* Bottom Navigation */
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #111; border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+    .nav-item { color: #888; text-align: center; font-size: 12px; cursor: pointer; flex: 1; padding: 8px 0; }
+    .nav-item.active { color: #ff0000; font-weight: bold; }
+    .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">🐧 PENGUIN <span style="font-size:12px;background:#000;padding:2px 6px;border-radius:4px;">PRO</span></div>
-</header>
-
-<div class="search-area">
-  <input type="text" id="searchInput" onkeyup="searchVideo()" placeholder="🔍 ভিডিও বা গান খুঁজুন...">
-</div>
-
-<div class="tabs">
-  <button class="tab active" onclick="filterCategory('all', this)">🔥 সব ভিডিও</button>
-  <button class="tab" onclick="filterCategory('music', this)">🎵 গান</button>
-  <button class="tab" onclick="filterCategory('nature', this)">🌍 প্রকৃতি</button>
-  <button class="tab" onclick="filterCategory('shorts', this)">⚡ Shorts</button>
-</div>
-
-<!-- Home Section -->
-<div id="homeSection">
-  <div class="card">
-    <h3>▶️ লিংক পেস্ট করে সরাসরি চালান</h3>
-    <input type="text" id="ytLink" class="link-input" placeholder="YouTube ভিডিও বা Shorts লিংক দিন...">
-    <button class="btn-red" onclick="addYoutubeVideo()">▶ প্লে করুন</button>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🐧 PENGUIN <span>PRO</span></div>
+    <div class="my-id-badge" onclick="copyMyId()" id="myIdDisplay">ID লোড হচ্ছে...</div>
   </div>
 
-  <div id="videoList"></div>
-</div>
-
-<!-- Offline / Gallery Player Section -->
-<div id="filesSection" class="hidden">
-  <div class="card">
-    <h3>📂 ফোনের গ্যালারি থেকে ভিডিও চালান</h3>
-    <p style="font-size:13px;color:#aaa;margin-bottom:12px;">আপনার ফোনে সেভ থাকা যেকোনো ভিডিও বা গান অফলাইনে চালান:</p>
-    <label class="btn-red" style="display:block;text-align:center;">
-      + ফোন থেকে ভিডিও বেছে নিন
-      <input type="file" accept="video/*,audio/*" style="display:none" onchange="playLocalFile(event)">
-    </label>
-    <div id="localBox" class="video-box hidden" style="margin-top:12px;">
-      <video id="localPlayer" controls></video>
+  <!-- 1. SHORTS SCREEN -->
+  <div id="shortsScreen" class="screen active">
+    <button class="add-short-btn" onclick="addNewShort()">+ Shorts যোগ করুন</button>
+    <div id="shortsContainer">
+      <div class="short-card">
+        <iframe src="https://youtube.com" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      <div class="short-card">
+        <iframe src="https://youtube.com" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Bottom Navigation Bar -->
-<div class="bottom-nav">
-  <button class="nav-item active" id="navHome" onclick="switchTab('home')">
-    <span class="nav-icon">🏠</span>হোম
-  </button>
-  <button class="nav-item" id="navFiles" onclick="switchTab('files')">
-    <span class="nav-icon">📁</span>আমার ফাইল
-  </button>
-</div>
+  <!-- 2. SCAN & CONTACTS SCREEN -->
+  <div id="scanScreen" class="screen">
+    <div class="box-card" style="text-align:center;">
+      <h3>আপনার কন্টাক্ট QR কোড</h3>
+      <p style="font-size:12px; color:#aaa; margin:5px 0;">অন্যকে এটি স্ক্যান করতে দিন অথবা আপনার ID দিন</p>
+      <img id="myQrImg" src="" alt="My QR" style="width:150px; height:150px; margin:10px auto; border-radius:8px; background:#fff; padding:5px;">
+      <p id="fullIdText" style="color:#00e676; font-weight:bold; font-size:16px;"></p>
+    </div>
 
-<script>
-  function makeEmbedUrl(id, auto) {
-    var p = "https:" + "//";
-    var d = "www.youtube" + "-nocookie.com";
-    var f = "/embed/";
-    return p + d + f + id + (auto ? "?autoplay=1" : "");
-  }
+    <div class="box-card">
+      <h3>📷 ক্যামেরা দিয়ে QR স্ক্যান করুন</h3>
+      <button class="btn btn-blue" onclick="startScanner()">ক্যামেরা চালু করুন</button>
+      <div id="reader"></div>
+      
+      <hr style="border-color:#333; margin:15px 0;">
+      <h4>অথবা ID / নম্বর লিখে যোগ করুন:</h4>
+      <input type="text" id="friendNameInput" placeholder="বন্ধুর নাম লিখুন">
+      <input type="text" id="friendIdInput" placeholder="বন্ধুর ID বা নম্বর দিন">
+      <button class="btn btn-green" onclick="saveContactManual()">কন্টাক্ট সেভ করুন</button>
+    </div>
 
-  function createVideoCard(title, videoId, category, auto) {
-    var list = document.getElementById("videoList");
-    var card = document.createElement("div");
-    card.className = "card video-item";
-    card.setAttribute("data-cat", category);
+    <div class="box-card">
+      <h3>👥 সেভ করা কন্টাক্ট লিস্ট</h3>
+      <div id="contactList"></div>
+    </div>
+  </div>
 
-    var h3 = document.createElement("h3");
-    h3.innerText = title;
+  <!-- 3. CHAT & CALL SCREEN -->
+  <div id="chatScreen" class="screen">
+    <div class="chat-header">
+      <div>
+        <strong id="activeChatName">কাউকে সিলেক্ট করুন</strong>
+        <div id="activeChatId" style="font-size:11px; color:#00e676;"></div>
+      </div>
+      <div>
+        <button onclick="startCall(false)" style="background:#00c853; border:none; color:#fff; padding:7px 12px; border-radius:6px; font-weight:bold; cursor:pointer;">📞 অডিও</button>
+        <button onclick="startCall(true)" style="background:#2979ff; border:none; color:#fff; padding:7px 12px; border-radius:6px; font-weight:bold; cursor:pointer;">📹 ভিডিও</button>
+      </div>
+    </div>
 
-    var box = document.createElement("div");
-    box.className = "video-box";
+    <div class="messages-box" id="messagesBox">
+      <p style="text-align:center; color:#777; margin-top:50px;">কন্টাক্ট ট্যাব থেকে কাউকে সিলেক্ট করে MB দিয়ে মেসেজ বা কল শুরু করুন।</p>
+    </div>
 
-    var iframe = document.createElement("iframe");
-    iframe.src = makeEmbedUrl(videoId, auto);
-    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-    iframe.allowFullscreen = true;
+    <div class="chat-input-bar">
+      <input type="text" id="msgInput" placeholder="মেসেজ লিখুন (MB দিয়ে)...">
+      <button class="btn" onclick="sendMessage()">পাঠান</button>
+    </div>
+  </div>
 
-    box.appendChild(iframe);
-    card.appendChild(h3);
-    card.appendChild(box);
-    list.prepend(card);
-  }
+  <!-- CALL OVERLAY -->
+  <div id="callOverlay">
+    <h2 id="callStatusText">কল করা হচ্ছে...</h2>
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay muted playsinline></video>
+    <button class="btn" style="max-width:200px; margin-top:20px;" onclick="endCall()">কল কাটুন</button>
+  </div>
 
-  function getYoutubeId(url) {
-    var pos = -1;
-    if (url.indexOf("youtu.be/") !== -1) {
-      pos = url.indexOf("youtu.be/") + 9;
-    } else if (url.indexOf("/shorts/") !== -1) {
-      pos = url.indexOf("/shorts/") + 8;
-    } else if (url.indexOf("v=") !== -1) {
-      pos = url.indexOf("v=") + 2;
-    } else if (url.indexOf("/embed/") !== -1) {
-      pos = url.indexOf("/embed/") + 7;
-    }
-    if (pos !== -1) {
-      return url.substring(pos, pos + 11);
-    }
-    return "";
-  }
+  <!-- Install App Button -->
+  <button id="installAppBtn" style="display:none; position:fixed; bottom:70px; left:15px; background:#ff0000; color:#fff; border:none; padding:10px 15px; border-radius:20px; font-weight:bold; z-index:999;">⬇ অ্যাপ ইনস্টল</button>
 
-  function addYoutubeVideo() {
-    var url = document.getElementById("ytLink").value.trim();
-    var videoId = getYoutubeId(url);
-    if (videoId.length !== 11) {
-      alert("সঠিক YouTube ভিডিও বা Shorts লিংক দিন!");
-      return;
-    }
-    var cat = url.indexOf("/shorts/") !== -1 ? "shorts" : "all";
-    createVideoCard("🎬 আপনার যুক্ত করা ভিডিও", videoId, cat, true);
-    document.getElementById("ytLink").value = "";
-  }
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('shortsScreen', this)">
+      <span class="nav-icon">🎬</span>Shorts
+    </div>
+    <div class="nav-item" onclick="switchTab('scanScreen', this)">
+      <span class="nav-icon">📷</span>স্ক্যান ও কন্টাক্ট
+    </div>
+    <div class="nav-item" onclick="switchTab('chatScreen', this)">
+      <span class="nav-icon">💬</span>মেসেজ ও কল
+    </div>
+  </div>
 
-  function searchVideo() {
-    var query = document.getElementById("searchInput").value.toLowerCase();
-    var cards = document.querySelectorAll(".video-item");
-    cards.forEach(function(card) {
-      var title = card.querySelector("h3").innerText.toLowerCase();
-      card.style.display = title.includes(query) ? "block" : "none";
-    });
-  }
+  <!-- Firebase & App Logic -->
+  <script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getDatabase, ref, push, onChildAdded } from "https://gstatic.com";
 
-  function filterCategory(cat, btn) {
-    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active"); });
-    btn.classList.add("active");
-    var cards = document.querySelectorAll(".video-item");
-    cards.forEach(function(card) {
-      var itemCat = card.getAttribute("data-cat");
-      if (cat === "all" || itemCat === cat) {
-        card.style.display = "block";
-      } else {
-        card.style.display = "none";
-      }
-    });
-  }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUD-iiLSIFCCvZd44fQQHPpV28CWGynFk",
+      authDomain: "://firebaseapp.com",
+      databaseURL: "https://firebaseio.com",
+      projectId: "penguin-pro",
+      storageBucket: "penguin-pro.firebasestorage.app",
+      messagingSenderId: "548894421868",
+      appId: "1:548894421868:web:55e304231182dbad3c3949"
+    };
 
-  function switchTab(tab) {
-    if (tab === "home") {
-      document.getElementById("homeSection").classList.remove("hidden");
-      document.getElementById("filesSection").classList.add("hidden");
-      document.getElementById("navHome").classList.add("active");
-      document.getElementById("navFiles").classList.remove("active");
-    } else {
-      document.getElementById("homeSection").classList.add("hidden");
-      document.getElementById("filesSection").classList.remove("hidden");
-      document.getElementById("navHome").classList.remove("active");
-      document.getElementById("navFiles").classList.add("active");
-    }
-  }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  function playLocalFile(event) {
-    var file = event.target.files.item(0);
-    if (file) {
-      var box = document.getElementById("localBox");
-      var player = document.getElementById("localPlayer");
-      player.src = URL.createObjectURL(file);
-      box.classList.remove("hidden");
-      player.play();
-    }
-  }
-
-  // Default Videos
-  createVideoCard("🎵 লফাই মিউজিক (Chill Beats)", "jfKfPfyJRdk", "music", false);
-  createVideoCard("🌍 প্রকৃতির দৃশ্য (4K Nature)", "LXb3EKWsInQ", "nature", false);
-  createVideoCard("⚡ 3D অ্যানিমেশন শর্ট ফিল্ম", "aqz-KE-bpKQ", "shorts", false);
-</script>
-<button id="installAppBtn" style="display:none; position:fixed; bottom:75px; right:15px; background:#ff0000; color:#fff; border:none; padding:12px 18px; border-radius:25px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5); z-index:9999; cursor:pointer;">
-  ⬇ অ্যাপ ডাউনলোড করুন
-</button>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-
-  let deferredPrompt;
-  const installBtn = document.getElementById('installAppBtn');
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = 'block';
-  });
-
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installBtn.style.display = 'none';
-      }
-      deferredPrompt = null;
-    }
-  });
-</script>
-
-</body>
-</html>
+    // Generate or Load Unique User ID
+    let myUserId = localStorage.getItem('penguin_user_id');
