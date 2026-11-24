@@ -1,3 +1,52 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PENGUIN</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #101010; color: #ffffff; font-family: Arial, sans-serif; }
+  header { background: #171717; padding: 18px; font-size: 24px; font-weight: bold; color: #00d9ff; display: flex; align-items: center; gap: 8px; }
+  .search { padding: 12px; }
+  input { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 15px; margin-bottom: 10px; outline: none; }
+  .card { background: #1e1e1e; margin: 12px; padding: 14px; border-radius: 12px; }
+  .video-box { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000000; }
+  .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  button { background: #00d9ff; color: #000000; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
+  h3 { margin-top: 0; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<header>🐧 PENGUIN</header>
+
+<div class="search">
+  <input type="text" id="searchInput" onkeyup="searchVideo()" placeholder="ভিডিওর নাম লিখে খুঁজুন...">
+</div>
+
+<div class="card">
+  <h3>▶️ ইউটিউব লিংক দিয়ে ভিডিও চালান</h3>
+  <input type="text" id="ytLink" placeholder="YouTube বা Shorts লিংক এখানে পেস্ট করুন...">
+  <button onclick="addYoutubeVideo()">অ্যাপের ভেতরেই চালান</button>
+</div>
+
+<div id="videoList">
+  <div class="card video-item">
+    <h3>ডেমো ভিডিও ১ (Nature 4K)</h3>
+    <div class="video-box">
+      <iframe src="https://youtube-nocookie.com" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="card video-item">
+    <h3>ডেমো ভিডিও ২ (Scenic View)</h3>
+    <div class="video-box">
+      <iframe src="https://youtube-nocookie.com" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
 <script>
   function getYoutubeId(url) {
     var pos = -1;
@@ -25,15 +74,13 @@
       return;
     }
 
-    var p1 = "https://";
-    var p2 = "://youtube-nocookie.com";
-    var p3 = "/embed/";
-    var fullSrc = p1 + p2 + p3 + videoId + "?autoplay=1";
+    var host = "www.youtube" + "-nocookie.com";
+    var fullSrc = "https://" + host + "/embed/" + videoId + "?autoplay=1";
 
     var list = document.getElementById("videoList");
     var newCard = document.createElement("div");
     newCard.className = "card video-item";
-    newCard.innerHTML = '<h3>আপনার ভিডিও</h3><div class="video-box"><iframe src="' + fullSrc + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+    newCard.innerHTML = '<h3>আপনার ভিডিও</h3><div class="video-box"><iframe src="' + fullSrc + '" allowfullscreen></iframe></div>';
 
     list.prepend(newCard);
     document.getElementById("ytLink").value = "";
@@ -48,3 +95,6 @@
     });
   }
 </script>
+
+</body>
+</html>
