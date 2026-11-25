@@ -3,66 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SuperChat BD</title>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <title>SuperChat BD - Cosmic Edition</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=40">
 </head>
 <body oncontextmenu="return false;">
 
+  <!-- ৭টি গ্রহ ও তারার লাইভ মহাকাশ অ্যানিমেশন -->
   <div id="wechatSplash" class="wechat-splash">
-    <div style="text-align:right; color:#aaa; font-size:13px;">🛡️ 256-Bit Protected</div>
-    <div class="earth-container"><div class="earth-glow"></div><div class="person-silhouette"></div></div>
+    <div class="stars-bg"></div>
+    <div style="display:flex; justify-content:space-between; z-index:10; font-size:13px; color:#a8d8ff;">
+      <span>🌌 SuperChat Universe</span>
+      <span>🛡️ 256-Bit Protected</span>
+    </div>
+    <div class="solar-system">
+      <div class="sun-core"></div>
+      <div class="orbit o1"><div class="planet p1"></div></div>
+      <div class="orbit o2"><div class="planet p2"></div></div>
+      <div class="orbit o3"><div class="planet p3"></div></div>
+      <div class="orbit o4"><div class="planet p4"></div></div>
+      <div class="orbit o5"><div class="planet p5"></div></div>
+      <div class="orbit o6"><div class="planet p6"></div></div>
+      <div class="orbit o7"><div class="planet p7"></div></div>
+    </div>
     <div class="welcome-btns">
-      <button class="w-btn w-login" onclick="openAuth('login')">Log In</button>
-      <button class="w-btn w-signup" onclick="openAuth('signup')">Sign Up</button>
+      <button type="button" class="w-btn w-login" onclick="showAuth('login')">Log In</button>
+      <button type="button" class="w-btn w-signup" onclick="showAuth('signup')">Sign Up</button>
     </div>
   </div>
 
+  <!-- লগইন ও সাইনআপ বক্স -->
   <div id="authScreen" class="auth-screen" style="display:none;">
     <div class="auth-box">
       <h2 id="authTitle">🛡️ Log In</h2>
-      <p>সুরক্ষিত অ্যাকাউন্ট তথ্য দিন</p>
-      <input type="email" id="authEmail" class="auth-input" placeholder="আপনার ইমেইল">
+      <p style="font-size:13px; color:#666; margin-bottom:14px;">সুরক্ষিত অ্যাকাউন্ট তথ্য দিন</p>
+      <input type="email" id="authEmail" class="auth-input" placeholder="আপনার ইমেইল (যেমন: user@gmail.com)">
       <input type="password" id="authPass" class="auth-input" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
-      <p id="authError" style="color:red; font-size:12px; margin-bottom:10px;"></p>
-      <button type="button" class="auth-btn" id="btnLogin">Log In</button>
-      <button type="button" class="auth-btn secondary" id="btnRegister">Sign Up</button>
+      <p id="authError" style="color:red; font-size:12px; margin-bottom:10px; font-weight:bold;"></p>
+      <button type="button" class="auth-btn" id="btnLogin">Log In (লগইন)</button>
+      <button type="button" class="auth-btn secondary" id="btnRegister">Sign Up (নতুন অ্যাকাউন্ট)</button>
       <button type="button" style="background:none; border:none; color:gray; margin-top:8px;" onclick="document.getElementById('authScreen').style.display='none'">বন্ধ করুন</button>
     </div>
   </div>
 
+  <!-- মূল অ্যাপ ইন্টারফেস -->
   <div class="header">
     <div class="header-title"><span>🛡️ SuperChat</span></div>
     <button type="button" class="icon-btn" id="btnLogout">লগআউট</button>
   </div>
 
   <div class="content">
+    <!-- ট্যাব ১: চ্যাট লিস্ট -->
     <div id="chats" class="tab-page active">
-      <div class="card" onclick="openChat('Global Encrypted Room')">
+      <div class="card" onclick="openChat('global_chat', 'Global Encrypted Room')">
         <div class="avatar av-green">💬</div>
-        <div class="card-info"><h4>Global Encrypted Room</h4><p id="last-msg-preview" style="color:#07C160;">লাইভ চ্যাটে প্রবেশ করুন...</p></div>
+        <div><h4>Global Encrypted Room</h4><p id="last-msg-preview" style="font-size:13px; color:#07C160;">লাইভ চ্যাটে প্রবেশ করুন...</p></div>
       </div>
+      <div id="privateChatList"></div>
     </div>
 
+    <!-- ট্যাব ২: বন্ধু অ্যাড (Add Friend) -->
     <div id="contacts" class="tab-page">
-      <div class="card"><div class="avatar av-blue">👥</div><div class="card-info"><h4>Verified Contacts</h4><p>সুরক্ষিত ইউজার তালিকা</p></div></div>
+      <div class="video-box">
+        <h4 style="margin-bottom:8px;">👥 নতুন বন্ধু যোগ করুন (Add Friend)</h4>
+        <input type="email" id="friendEmailInput" placeholder="বন্ধুর ইমেইল লিখুন...">
+        <button type="button" class="auth-btn" id="btnAddFriend" style="padding:9px; font-size:14px;">বন্ধু যোগ করুন</button>
+      </div>
+      <div id="friendsList"></div>
     </div>
 
-    <!-- নিরাপদ ভিডিও ফিড (Moments) -->
+    <!-- ট্যাব ৩: নিরাপদ ভিডিও ফিড (Moments) -->
     <div id="discover" class="tab-page">
       <div class="video-box">
-        <h4 style="margin-bottom:8px;">🎬 নিরাপদ ভিডিও শেয়ার করুন (YouTube Link)</h4>
-        <input type="url" id="videoUrlInput" placeholder="YouTube ভিডিও লিংক পেস্ট করুন...">
-        <button type="button" class="auth-btn" id="btnPostVideo" style="padding:8px; font-size:14px;">পোস্ট করুন</button>
+        <h4 style="margin-bottom:8px;">🎬 নিরাপদ ভিডিও শেয়ার করুন</h4>
+        <input type="url" id="videoUrlInput" placeholder="YouTube ভিডিও লিংক দিন...">
+        <button type="button" class="auth-btn" id="btnPostVideo" style="padding:9px; font-size:14px;">পোস্ট করুন</button>
       </div>
       <div id="videoFeedList"></div>
     </div>
 
-    <!-- সুরক্ষিত ওয়ালেট ও পিন -->
+    <!-- ট্যাব ৪: প্রোফাইল ও ওয়ালেট (Me) -->
     <div id="me" class="tab-page">
       <div class="card">
         <div class="avatar av-orange">💳</div>
-        <div class="card-info"><h4 id="userEmailDisplay">User Profile</h4><p style="color:#07C160;">Zero-Trust ওয়ালেট সক্রিয় 🔒</p></div>
+        <div><h4 id="userEmailDisplay">User Profile</h4><p style="font-size:13px; color:#07C160;">Zero-Trust ওয়ালেট ও অ্যাকাউন্ট সক্রিয় 🔒</p></div>
       </div>
     </div>
   </div>
@@ -74,6 +99,7 @@
     <button class="nav-btn" onclick="switchTab('me', 'Me', this)">👤<br>Me</button>
   </div>
 
+  <!-- চ্যাট রুম -->
   <div id="chatRoom" class="chat-room">
     <div class="header">
       <div class="header-title" onclick="closeChat()" style="cursor:pointer;">⬅️ <span id="chatPartnerName">Chat</span></div>
@@ -87,11 +113,94 @@
   </div>
 
   <script>
-    function openAuth(m) { document.getElementById('authScreen').style.display='flex'; document.getElementById('authTitle').textContent = m==='login' ? '🛡️ Log In' : '🛡️ Sign Up'; }
-    function switchTab(id, title, btn) { document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); document.querySelector('.header-title span').textContent=title; }
-    function openChat(n) { document.getElementById('chatPartnerName').textContent=n; document.getElementById('chatRoom').classList.add('open'); }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    }
+    function showAuth(m) {
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('authTitle').textContent = m === 'login' ? '🛡️ Log In' : '🛡️ Sign Up';
+    }
+    function switchTab(id, title, btn) {
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      btn.classList.add('active');
+      document.querySelector('.header-title span').textContent = title;
+    }
     function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
+    // অ্যান্টি-হ্যাক শিল্ড
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) e.preventDefault();
+    });
   </script>
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+
+  <script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://gstatic.com";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://gstatic.com";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHYNtlZWcz87KD3a29byrDkBM2dQTDjWE",
+      authDomain: "://firebaseapp.com",
+      projectId: "superchat-bd-48a39",
+      storageBucket: "superchat-bd-48a39.firebasestorage.app",
+      messagingSenderId: "539120964827",
+      appId: "1:539120964827:web:56d0c23e48aa37d00368fe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let currentUser = null;
+    let currentRoomId = "global_chat";
+    let unsubscribeChat = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('wechatSplash').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('userEmailDisplay').textContent = user.email;
+        loadVideos();
+        renderFriends();
+      } else {
+        currentUser = null;
+        document.getElementById('wechatSplash').style.display = 'flex';
+      }
+    });
+
+    document.getElementById('btnRegister').onclick = async () => {
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value;
+      const err = document.getElementById('authError');
+      if (!email || pass.length < 6) { err.style.color = "red"; err.textContent = "ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন!"; return; }
+      err.style.color = "#07C160"; err.textContent = "অ্যাকাউন্ট তৈরি হচ্ছে...";
+      try { await createUserWithEmailAndPassword(auth, email, pass); } 
+      catch (e) { err.style.color = "red"; err.textContent = e.message; }
+    };
+
+    document.getElementById('btnLogin').onclick = async () => {
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value;
+      const err = document.getElementById('authError');
+      if (!email || !pass) { err.style.color = "red"; err.textContent = "ইমেইল ও পাসওয়ার্ড দিন!"; return; }
+      err.style.color = "#07C160"; err.textContent = "লগইন হচ্ছে...";
+      try { await signInWithEmailAndPassword(auth, email, pass); } 
+      catch (e) { err.style.color = "red"; err.textContent = e.message; }
+    };
+
+    document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+    // বন্ধু অ্যাড করার সিস্টেম
+    document.getElementById('btnAddFriend').onclick = () => {
+      const fEmail = document.getElementById('friendEmailInput').value.trim().toLowerCase();
+      if (!fEmail || !fEmail.includes('@') || fEmail === currentUser.email.toLowerCase()) {
+        alert("সঠিক বন্ধুর ইমেইল দিন!"); return;
+      }
+      let friends = JSON.parse(localStorage.getItem('sc_friends_' + currentUser.uid) || '[]');
+      if (!friends.includes(fEmail)) {
+        friends.push(fEmail);
+        localStorage.setItem('sc_friends_' + currentUser.uid, JSON.stringify(friends));
+      }
+      document.getElementById('friendEmailInput').value = '';
+      renderFriends();
