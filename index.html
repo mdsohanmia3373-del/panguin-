@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SuperChat</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=80">
+  <link rel="stylesheet" href="style.css?v=99">
+  <!-- Direct Reliable Firebase SDK -->
+  <script src="https://gstatic.com"></script>
+  <script src="https://gstatic.com"></script>
+  <script src="https://gstatic.com"></script>
 </head>
 <body oncontextmenu="return false;">
 
@@ -117,37 +121,6 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
     }
-    function showAuth(m) {
-      document.getElementById('authError').textContent = '';
-      document.getElementById('authScreen').style.display = 'flex';
-      document.getElementById('authTitle').textContent = m === 'login' ? 'Log In' : 'Sign Up';
-    }
-    function switchTab(id, title, btn) {
-      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      btn.classList.add('active');
-      document.querySelector('.header-title span').textContent = title;
-    }
-    function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
-
-    window.fbReady = false;
-    window.handleRegister = () => {
-      const err = document.getElementById('authError');
-      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Server still loading, check internet..."; return; }
-      window._doRegister();
-    };
-    window.handleLogin = () => {
-      const err = document.getElementById('authError');
-      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Server still loading, check internet..."; return; }
-      window._doLogin();
-    };
-  </script>
-
-  <script type="module">
-    import { initializeApp } from "https://jsdelivr.net";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://jsdelivr.net";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://jsdelivr.net";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCHYNtlZWcz87KD3a29byrDkBM2dQTDjWE",
@@ -158,15 +131,30 @@
       appId: "1:539120964827:web:56d0c23e48aa37d00368fe"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
     let currentUser = null;
     let currentRoomId = "global_chat";
     let unsubscribeChat = null;
-    window.fbReady = true;
 
-    onAuthStateChanged(auth, (user) => {
+    function showAuth(m) {
+      document.getElementById('authError').textContent = '';
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('authTitle').textContent = m === 'login' ? 'Log In' : 'Sign Up';
+    }
+
+    function switchTab(id, title, btn) {
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      btn.classList.add('active');
+      document.querySelector('.header-title span').textContent = title;
+    }
+
+    function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
+
+    auth.onAuthStateChanged((user) => {
       if (user) {
         currentUser = user;
         document.getElementById('wechatSplash').style.display = 'none';
@@ -180,29 +168,29 @@
       }
     });
 
-    window._doRegister = async () => {
+    function handleRegister() {
       const email = document.getElementById('authEmail').value.trim();
       const pass = document.getElementById('authPass').value;
       const err = document.getElementById('authError');
       if (!email || pass.length < 6) { err.style.color = "red"; err.textContent = "Enter valid email & min 6-character password!"; return; }
       err.style.color = "#07C160"; err.textContent = "Creating account...";
-      try { await createUserWithEmailAndPassword(auth, email, pass); } 
-      catch (e) { err.style.color = "red"; err.textContent = e.message; }
-    };
+      auth.createUserWithEmailAndPassword(email, pass)
+        .catch(e => { err.style.color = "red"; err.textContent = e.message; });
+    }
 
-    window._doLogin = async () => {
+    function handleLogin() {
       const email = document.getElementById('authEmail').value.trim();
       const pass = document.getElementById('authPass').value;
       const err = document.getElementById('authError');
       if (!email || !pass) { err.style.color = "red"; err.textContent = "Enter email and password!"; return; }
       err.style.color = "#07C160"; err.textContent = "Logging in...";
-      try { await signInWithEmailAndPassword(auth, email, pass); } 
-      catch (e) { err.style.color = "red"; err.textContent = e.message; }
-    };
+      auth.signInWithEmailAndPassword(email, pass)
+        .catch(e => { err.style.color = "red"; err.textContent = e.message; });
+    }
 
-    window.handleLogout = () => signOut(auth);
+    function handleLogout() { auth.signOut(); }
 
-    window.handleAddFriend = () => {
+    function handleAddFriend() {
       const fEmail = document.getElementById('friendEmailInput').value.trim().toLowerCase();
       if (!fEmail || !fEmail.includes('@') || fEmail === currentUser.email.toLowerCase()) {
         alert("Enter a valid friend's email!"); return;
@@ -213,3 +201,18 @@
         localStorage.setItem('sc_friends_' + currentUser.uid, JSON.stringify(friends));
       }
       document.getElementById('friendEmailInput').value = '';
+      renderFriends();
+      alert("Friend added! Tap on their name to start private chat.");
+    }
+
+    function renderFriends() {
+      const friends = JSON.parse(localStorage.getItem('sc_friends_' + currentUser.uid) || '[]');
+      const fList = document.getElementById('friendsList');
+      const pList = document.getElementById('privateChatList');
+      fList.innerHTML = ''; pList.innerHTML = '';
+
+      friends.forEach(email => {
+        const roomId = [currentUser.email.toLowerCase(), email].sort().join('_').replace(/[^a-zA-Z0-9]/g, '');
+        const name = email.split('@')[0];
+        const cardHTML = `<div class="avatar av-blue">👤</div><div><h4>${name}</h4><p style="font-size:12px; color:#07C160;">${email}</p></div>`;
+        
