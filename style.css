@@ -1,15 +1,68 @@
-/* WeChat Welcome Animation */
-.wechat-splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 48%, #0d2b45 0%, #03080e 65%, #000 100%); display: flex; flex-direction: column; justify-content: space-between; z-index: 3000; padding: 20px; color: #fff; }
-.earth-container { position: relative; width: 250px; height: 250px; margin: auto; display: flex; align-items: center; justify-content: center; }
-.earth-glow { width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #a8d8ff 0%, #2b6cb0 45%, #08182b 85%); box-shadow: 0 0 45px rgba(80, 170, 255, 0.65); animation: pulseEarth 4s infinite alternate ease-in-out; }
-@keyframes pulseEarth { 0% { transform: scale(0.97); } 100% { transform: scale(1.03); box-shadow: 0 0 65px rgba(120, 195, 255, 0.9); } }
-.person-silhouette { position: absolute; bottom: 16px; width: 14px; height: 32px; background: #020508; border-radius: 50% 50% 2px 2px; }
-.welcome-btns { display: flex; gap: 15px; padding-bottom: 15px; }
-.w-btn { flex: 1; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; }
-.w-login { background: #07C160; color: #fff; }
-.w-signup { background: #222629; color: #fff; }
+:root { --primary: #07C160; --bg-main: #F2F4F7; --card-bg: #FFFFFF; --text-main: #1A1D1F; --text-sub: #6F767E; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; -webkit-user-select: none; }
+html, body { height: 100%; width: 100%; background-color: var(--bg-main); color: var(--text-main); overflow: hidden; }
+body { display: flex; flex-direction: column; justify-content: space-between; }
 
-/* নিরাপদ ভিডিও ফিড (Moments) ডিজাইন */
-.video-box { background: #FFF; padding: 14px; border-radius: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+/* মহাকাশ, তারা ও ৭টি গ্রহের লাইভ অ্যানিমেশন */
+.wechat-splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 45%, #091d36 0%, #02060d 65%, #000000 100%); display: flex; flex-direction: column; justify-content: space-between; z-index: 3000; padding: 20px; color: #fff; overflow: hidden; }
+.stars-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(1.5px 1.5px at 20px 30px, #fff, transparent), radial-gradient(1.5px 1.5px at 90px 140px, #a8d8ff, transparent), radial-gradient(2px 2px at 180px 80px, #fff, transparent), radial-gradient(1px 1px at 250px 210px, #ffd700, transparent), radial-gradient(1.5px 1.5px at 310px 60px, #fff, transparent); background-size: 340px 260px; animation: twinkleStars 3s infinite alternate ease-in-out; pointer-events: none; }
+@keyframes twinkleStars { 0% { opacity: 0.45; } 100% { opacity: 1; } }
+
+.solar-system { position: relative; width: 320px; height: 320px; margin: auto; display: flex; align-items: center; justify-content: center; }
+.sun-core { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle, #fff7ad 0%, #ff9d00 60%, #ff4500 100%); box-shadow: 0 0 35px #ff9d00, 0 0 65px rgba(255, 140, 0, 0.6); z-index: 5; }
+.orbit { position: absolute; border-radius: 50%; border: 1px dashed rgba(255, 255, 255, 0.14); animation: spinOrbit linear infinite; }
+.planet { position: absolute; border-radius: 50%; top: 50%; transform: translateY(-50%); }
+
+.o1 { width: 86px; height: 86px; animation-duration: 5s; } .p1 { width: 8px; height: 8px; left: -4px; background: #b5b5b5; box-shadow: 0 0 6px #fff; }
+.o2 { width: 118px; height: 118px; animation-duration: 8s; } .p2 { width: 11px; height: 11px; right: -5.5px; background: #f3c677; box-shadow: 0 0 8px #f3c677; }
+.o3 { width: 154px; height: 154px; animation-duration: 12s; } .p3 { width: 13px; height: 13px; left: -6.5px; background: radial-gradient(circle at 30% 30%, #7cc6fe, #0055ff); box-shadow: 0 0 10px #3898ff; }
+.o4 { width: 190px; height: 190px; animation-duration: 16s; } .p4 { width: 10px; height: 10px; right: -5px; background: #ff5733; box-shadow: 0 0 8px #ff5733; }
+.o5 { width: 232px; height: 232px; animation-duration: 22s; } .p5 { width: 18px; height: 18px; left: -9px; background: radial-gradient(circle, #ffd29d, #c87d32); box-shadow: 0 0 12px #e09f5a; }
+.o6 { width: 274px; height: 274px; animation-duration: 28s; } .p6 { width: 15px; height: 15px; right: -7.5px; background: #ebd39b; box-shadow: 0 0 0 3px rgba(235, 211, 155, 0.35); }
+.o7 { width: 312px; height: 312px; animation-duration: 35s; } .p7 { width: 12px; height: 12px; left: -6px; background: #4deeea; box-shadow: 0 0 10px #4deeea; }
+@keyframes spinOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.welcome-btns { display: flex; gap: 15px; padding-bottom: 15px; z-index: 10; }
+.w-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; }
+.w-login { background: #07C160; color: #fff; box-shadow: 0 4px 15px rgba(7, 193, 96, 0.4); }
+.w-signup { background: rgba(255,255,255,0.14); color: #fff; backdrop-filter: blur(6px); }
+
+/* লগইন ও সাইনআপ বক্স */
+.auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 4000; padding: 20px; }
+.auth-box { background: #FFF; width: 100%; max-width: 360px; padding: 26px 20px; border-radius: 18px; text-align: center; }
+.auth-box h2 { color: #07C160; margin-bottom: 6px; }
+.auth-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #DDE1E6; border-radius: 10px; font-size: 15px; outline: none; user-select: text; -webkit-user-select: text; }
+.auth-btn { width: 100%; padding: 12px; background: #07C160; color: #FFF; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 8px; }
+.auth-btn.secondary { background: #E8F8F0; color: #07C160; }
+
+/* মূল অ্যাপ ইন্টারফেস */
+.header { background: linear-gradient(135deg, #07C160, #049E4E); color: #FFF; padding: 15px 18px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.header-title { font-weight: 700; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+.icon-btn { background: rgba(255,255,255,0.2); border: none; border-radius: 20px; padding: 6px 12px; color: #FFF; font-size: 12px; font-weight: bold; cursor: pointer; }
+.content { flex: 1; overflow-y: auto; padding: 14px; }
+.tab-page { display: none; }
+.tab-page.active { display: block; }
+.card { background: var(--card-bg); padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; }
+.avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #FFF; font-size: 22px; margin-right: 14px; flex-shrink: 0; }
+.av-green { background: linear-gradient(135deg, #07C160, #00A854); }
+.av-blue { background: linear-gradient(135deg, #2B85FF, #005CE6); }
+.av-purple { background: linear-gradient(135deg, #8A2BE2, #5D12D2); }
+.av-orange { background: linear-gradient(135deg, #FF7A00, #E65100); }
+.bottom-nav { background: #FFFFFF; border-top: 1px solid #E6E8EC; display: flex; justify-content: space-around; padding: 8px 0 12px 0; flex-shrink: 0; width: 100%; }
+.nav-btn { background: none; border: none; color: #8E959E; font-size: 12px; font-weight: 500; cursor: pointer; flex: 1; }
+.nav-btn.active { color: var(--primary); font-weight: 700; }
+
+/* চ্যাট রুম ও ভিডিও ফিড */
+.chat-room { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #E9EDF2; display: none; flex-direction: column; z-index: 1000; }
+.chat-room.open { display: flex; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 15px; word-wrap: break-word; user-select: text; -webkit-user-select: text; }
+.msg-sender { font-size: 10px; opacity: 0.75; margin-bottom: 3px; display: block; }
+.msg.received { background: #FFF; align-self: flex-start; }
+.msg.sent { background: linear-gradient(135deg, #07C160, #06AD56); color: #FFF; align-self: flex-end; }
+.chat-input-area { background: #FFF; padding: 10px 12px; border-top: 1px solid #E6E8EC; display: flex; gap: 8px; }
+.chat-input { flex: 1; padding: 11px 14px; border: 1px solid #DDE1E6; border-radius: 20px; font-size: 15px; outline: none; background: #F4F6F8; user-select: text; -webkit-user-select: text; }
+.send-btn { background: var(--primary); color: #FFF; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+.video-box { background: #FFF; padding: 14px; border-radius: 14px; margin-bottom: 12px; }
 .video-box input { width: 100%; padding: 10px; border: 1px solid #DDE1E6; border-radius: 8px; margin-bottom: 8px; user-select: text; -webkit-user-select: text; }
 .video-frame { width: 100%; height: 200px; border-radius: 10px; border: none; margin-top: 8px; background: #000; }
