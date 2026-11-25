@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SuperChat</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=70">
+  <link rel="stylesheet" href="style.css?v=80">
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- Clean Solar System Welcome Screen (No Top Text) -->
+  <!-- Realistic Solar System Welcome Screen -->
   <div id="wechatSplash" class="wechat-splash">
     <div class="stars-bg"></div>
     <div class="solar-system">
@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <!-- Log In & Sign Up Box -->
+  <!-- Log In & Sign Up Modal -->
   <div id="authScreen" class="auth-screen" style="display:none;">
     <div class="auth-box">
       <h2 id="authTitle">Log In</h2>
@@ -134,20 +134,20 @@
     window.fbReady = false;
     window.handleRegister = () => {
       const err = document.getElementById('authError');
-      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Connecting to server, please wait 2 seconds..."; return; }
+      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Server still loading, check internet..."; return; }
       window._doRegister();
     };
     window.handleLogin = () => {
       const err = document.getElementById('authError');
-      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Connecting to server, please wait 2 seconds..."; return; }
+      if (!window.fbReady) { err.style.color = "red"; err.textContent = "Server still loading, check internet..."; return; }
       window._doLogin();
     };
   </script>
 
   <script type="module">
-    import { initializeApp } from "https://gstatic.com";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://gstatic.com";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://gstatic.com";
+    import { initializeApp } from "https://jsdelivr.net";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://jsdelivr.net";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://jsdelivr.net";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCHYNtlZWcz87KD3a29byrDkBM2dQTDjWE",
