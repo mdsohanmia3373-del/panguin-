@@ -3,38 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com;">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <title>SuperChat BD - Secure App</title>
+  <title>SuperChat BD - Encrypted</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    :root {
-      --primary: #07C160;
-      --primary-dark: #059B4C;
-      --bg-main: #F2F4F7;
-      --card-bg: #FFFFFF;
-      --text-main: #1A1D1F;
-      --text-sub: #6F767E;
-    }
+    :root { --primary: #07C160; --bg-main: #F2F4F7; --card-bg: #FFFFFF; --text-main: #1A1D1F; --text-sub: #6F767E; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; -webkit-user-select: none; }
     html, body { height: 100%; width: 100%; background-color: var(--bg-main); color: var(--text-main); overflow: hidden; }
     body { display: flex; flex-direction: column; justify-content: space-between; }
 
-    /* আকর্ষণীয় হেডার */
+    /* লগইন স্ক্রিন ডিজাইন */
+    .auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #07C160, #037D3E); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+    .auth-box { background: #FFF; width: 100%; max-width: 360px; padding: 28px 22px; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
+    .auth-box h2 { color: #07C160; margin-bottom: 6px; font-size: 22px; }
+    .auth-box p { color: var(--text-sub); font-size: 13px; margin-bottom: 18px; }
+    .auth-input { width: 100%; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #DDE1E6; border-radius: 10px; font-size: 15px; outline: none; user-select: text; -webkit-user-select: text; }
+    .auth-btn { width: 100%; padding: 12px; background: #07C160; color: #FFF; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+    .auth-btn.secondary { background: #E8F8F0; color: #07C160; }
     .header { background: linear-gradient(135deg, #07C160, #049E4E); color: #FFF; padding: 15px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(7, 193, 96, 0.25); flex-shrink: 0; }
-    .header-title { font-weight: 700; font-size: 19px; letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px; }
-    .header-actions { display: flex; gap: 14px; align-items: center; }
-    .icon-btn { background: rgba(255,255,255,0.18); border: none; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: #FFF; cursor: pointer; }
+    .header-title { font-weight: 700; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+    .icon-btn { background: rgba(255,255,255,0.2); border: none; border-radius: 20px; padding: 6px 12px; color: #FFF; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-    /* কন্টেন্ট এরিয়া */
     .content { flex: 1; overflow-y: auto; padding: 14px; }
-    .tab-page { display: none; animation: fadeIn 0.2s ease-in-out; }
+    .tab-page { display: none; }
     .tab-page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-    /* আধুনিক কার্ড ডিজাইন */
-    .card { background: var(--card-bg); padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.1s; }
-    .card:active { transform: scale(0.98); background: #F9FAFB; }
-    .avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #FFF; margin-right: 14px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .card { background: var(--card-bg); padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; }
+    .avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #FFF; margin-right: 14px; flex-shrink: 0; }
     .av-green { background: linear-gradient(135deg, #07C160, #00A854); }
     .av-blue { background: linear-gradient(135deg, #2B85FF, #005CE6); }
     .av-purple { background: linear-gradient(135deg, #8A2BE2, #5D12D2); }
@@ -42,19 +37,18 @@
     .card-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
     .card-info p { font-size: 13px; color: var(--text-sub); }
 
-    /* নিচের নেভিগেশন বার */
-    .bottom-nav { background: #FFFFFF; border-top: 1px solid #E6E8EC; display: flex; justify-content: space-around; padding: 8px 0 12px 0; flex-shrink: 0; width: 100%; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); }
+    .bottom-nav { background: #FFFFFF; border-top: 1px solid #E6E8EC; display: flex; justify-content: space-around; padding: 8px 0 12px 0; flex-shrink: 0; width: 100%; }
     .nav-btn { background: none; border: none; color: #8E959E; font-size: 11px; font-weight: 500; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; gap: 4px; }
     .nav-btn.active { color: var(--primary); font-weight: 700; }
     .nav-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-    /* চ্যাট রুম ওভারলে */
     .chat-room { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #E9EDF2; display: none; flex-direction: column; z-index: 1000; }
     .chat-room.open { display: flex; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .msg { max-width: 78%; padding: 11px 15px; border-radius: 14px; font-size: 15px; line-height: 1.4; word-wrap: break-word; user-select: text; -webkit-user-select: text; }
-    .msg.received { background: #FFF; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .msg.sent { background: linear-gradient(135deg, #07C160, #06AD56); color: #FFF; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 6px rgba(7, 193, 96, 0.25); }
+    .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 15px; line-height: 1.4; word-wrap: break-word; user-select: text; -webkit-user-select: text; }
+    .msg-sender { font-size: 10px; opacity: 0.75; margin-bottom: 3px; display: block; }
+    .msg.received { background: #FFF; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .msg.sent { background: linear-gradient(135deg, #07C160, #06AD56); color: #FFF; align-self: flex-end; border-bottom-right-radius: 4px; }
     .chat-input-area { background: #FFF; padding: 10px 12px; border-top: 1px solid #E6E8EC; display: flex; gap: 8px; align-items: center; }
     .chat-input { flex: 1; padding: 11px 14px; border: 1px solid #DDE1E6; border-radius: 20px; font-size: 15px; outline: none; background: #F4F6F8; user-select: text; -webkit-user-select: text; }
     .send-btn { background: var(--primary); color: #FFF; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; font-size: 14px; cursor: pointer; }
@@ -62,101 +56,167 @@
 </head>
 <body oncontextmenu="return false;">
 
+  <!-- লগইন ও অ্যাকাউন্ট তৈরির নিরাপদ স্ক্রিন -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-box">
+      <h2>🛡️ SuperChat BD</h2>
+      <p>সুরক্ষিত অ্যাকাউন্টে লগইন বা নতুন অ্যাকাউন্ট খুলুন</p>
+      <input type="email" id="authEmail" class="auth-input" placeholder="আপনার ইমেইল লিখুন">
+      <input type="password" id="authPass" class="auth-input" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
+      <p id="authError" style="color: red; font-size: 12px; margin-bottom: 10px;"></p>
+      <button class="auth-btn" onclick="loginUser()">লগইন করুন</button>
+      <button class="auth-btn secondary" onclick="registerUser()">নতুন অ্যাকাউন্ট খুলুন</button>
+    </div>
+  </div>
+
   <!-- উপরের হেডার -->
   <div class="header">
     <div class="header-title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span id="header-title">SuperChat</span>
     </div>
-    <div class="header-actions">
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-    </div>
+    <button class="icon-btn" onclick="logoutUser()">লগআউট</button>
   </div>
 
-  <!-- মাঝখানের ট্যাব পেজসমূহ -->
+  <!-- মাঝখানের পেজসমূহ -->
   <div class="content">
     <div id="chats" class="tab-page active">
-      <div class="card" onclick="openChat('Encrypted Vault Chat')">
-        <div class="avatar av-green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
+      <div class="card" onclick="openChat('Global Encrypted Room')">
+        <div class="avatar av-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <div class="card-info">
-          <h4>Encrypted Vault Chat</h4>
-          <p id="last-msg-preview" style="color: #07C160; font-weight: 500;">ট্যাপ করে নিরাপদ চ্যাট শুরু করুন...</p>
+          <h4>Global Encrypted Room</h4>
+          <p id="last-msg-preview" style="color: #07C160; font-weight: 500;">লাইভ সার্ভার চ্যাটে প্রবেশ করুন...</p>
         </div>
       </div>
     </div>
 
     <div id="contacts" class="tab-page">
-      <div class="card">
-        <div class="avatar av-blue">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="card-info">
-          <h4>Verified Contacts</h4>
-          <p>QR কোড বা সিকিউর আইডি দিয়ে বন্ধু যোগ করুন</p>
-        </div>
-      </div>
+      <div class="card"><div class="avatar av-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="card-info"><h4>Verified Contacts</h4><p>সুরক্ষিত ইউজার তালিকা</p></div></div>
     </div>
 
     <div id="discover" class="tab-page">
-      <div class="card">
-        <div class="avatar av-purple">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-        </div>
-        <div class="card-info">
-          <h4>Moments & Video Feed</h4>
-          <p>নিরাপদ ভিডিও শেয়ারিং ও মিনি-অ্যাপস</p>
-        </div>
-      </div>
+      <div class="card"><div class="avatar av-purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div><div class="card-info"><h4>Moments & Video Feed</h4><p>নিরাপদ ভিডিও শেয়ারিং ও মিনি-অ্যাপস</p></div></div>
     </div>
 
     <div id="me" class="tab-page">
-      <div class="card">
-        <div class="avatar av-orange">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        </div>
-        <div class="card-info">
-          <h4>Zero-Trust Wallet</h4>
-          <p style="color: #07C160; font-weight: 500;">2FA ও ব্যাংক-গ্রেড এনক্রিপশন সক্রিয়</p>
-        </div>
-      </div>
+      <div class="card"><div class="avatar av-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="card-info"><h4 id="userEmailDisplay">User Profile</h4><p style="color: #07C160; font-weight: 500;">সার্ভার ভেরিফাইড অ্যাকাউন্ট 🔒</p></div></div>
     </div>
   </div>
 
   <!-- নিচের নেভিগেশন বার -->
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('chats', 'SuperChat', this)">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chats
-    </button>
-    <button class="nav-btn" onclick="switchTab('contacts', 'Contacts', this)">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts
-    </button>
-    <button class="nav-btn" onclick="switchTab('discover', 'Discover', this)">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Discover
-    </button>
-    <button class="nav-btn" onclick="switchTab('me', 'Me', this)">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Me
-    </button>
+    <button class="nav-btn active" onclick="switchTab('chats', 'SuperChat', this)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chats</button>
+    <button class="nav-btn" onclick="switchTab('contacts', 'Contacts', this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Contacts</button>
+    <button class="nav-btn" onclick="switchTab('discover', 'Discover', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Discover</button>
+    <button class="nav-btn" onclick="switchTab('me', 'Me', this)"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Me</button>
   </div>
-  <!-- চ্যাট রুম ওভারলে -->
+
+  <!-- চ্যাট রুম -->
   <div id="chatRoom" class="chat-room">
     <div class="header">
       <div class="header-title" onclick="closeChat()" style="cursor:pointer;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         <span id="chatPartnerName">Chat</span>
       </div>
-      <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px;">AES-256 🔒</span>
+      <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px;">Live 🔒</span>
     </div>
-    <div id="chatMessages" class="chat-messages">
-      <div class="msg received">স্বাগতম! আপনার সব মেসেজ সর্বোচ্চ নিরাপত্তায় এনক্রিপ্টেড থাকবে।</div>
-    </div>
+    <div id="chatMessages" class="chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="messageInput" class="chat-input" placeholder="নিরাপদ মেসেজ লিখুন..." maxlength="1000" onkeypress="if(event.key==='Enter') sendMessage()">
+      <input type="text" id="messageInput" class="chat-input" placeholder="রিয়েল-টাইম মেসেজ লিখুন..." maxlength="1000" onkeypress="if(event.key==='Enter') sendMessage()">
       <button class="send-btn" onclick="sendMessage()">পাঠান</button>
     </div>
   </div>
+  <script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://gstatic.com";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp } from "https://gstatic.com";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHYNtlZWcz87KD3a29byrDkBM2dQTDjWE",
+      authDomain: "://firebaseapp.com",
+      projectId: "superchat-bd-48a39",
+      storageBucket: "superchat-bd-48a39.firebasestorage.app",
+      messagingSenderId: "539120964827",
+      appId: "1:539120964827:web:56d0c23e48aa37d00368fe",
+      measurementId: "G-DYYCYBDYMD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let currentUser = null;
+
+    // ইউজার লগইন স্টেট চেক
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('userEmailDisplay').textContent = user.email;
+        loadRealtimeMessages();
+      } else {
+        currentUser = null;
+        document.getElementById('authScreen').style.display = 'flex';
+      }
+    });
+
+    window.registerUser = async () => {
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+      } catch (e) { document.getElementById('authError').textContent = e.message; }
+    };
+
+    window.loginUser = async () => {
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (e) { document.getElementById('authError').textContent = "ভুল ইমেইল বা পাসওয়ার্ড!"; }
+    };
+
+    window.logoutUser = () => signOut(auth);
+
+    window.sendMessage = async () => {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text || !currentUser) return;
+      input.value = '';
+      await addDoc(collection(db, "global_chat"), {
+        text: text,
+        sender: currentUser.email.split('@')[0],
+        uid: currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+    };
+
+    function loadRealtimeMessages() {
+      const q = query(collection(db, "global_chat"), orderBy("createdAt", "asc"), limit(50));
+      onSnapshot(q, (snapshot) => {
+        const msgBox = document.getElementById('chatMessages');
+        msgBox.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const isMe = currentUser && data.uid === currentUser.uid;
+          const div = document.createElement('div');
+          div.className = 'msg ' + (isMe ? 'sent' : 'received');
+          
+          const senderTag = document.createElement('span');
+          senderTag.className = 'msg-sender';
+          senderTag.textContent = isMe ? 'আপনি' : data.sender;
+          
+          const textNode = document.createElement('div');
+          textNode.textContent = data.text; // XSS নিরাপদ
+          
+          div.appendChild(senderTag);
+          div.appendChild(textNode);
+          msgBox.appendChild(div);
+          document.getElementById('last-msg-preview').textContent = data.sender + ": " + data.text;
+        });
+        msgBox.scrollTop = msgBox.scrollHeight;
+      });
+    }
+  </script>
 
   <script>
     function switchTab(tabId, title, btn) {
@@ -166,55 +226,13 @@
       btn.classList.add('active');
       document.getElementById('header-title').textContent = title;
     }
-
-    function openChat(partnerName) {
-      document.getElementById('chatPartnerName').textContent = partnerName;
-      document.getElementById('chatRoom').classList.add('open');
-    }
-
-    function closeChat() {
-      document.getElementById('chatRoom').classList.remove('open');
-    }
-
-    function sendMessage() {
-      const input = document.getElementById('messageInput');
-      const rawText = input.value.trim();
-      if (!rawText) return;
-
-      const msgBox = document.getElementById('chatMessages');
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'msg sent';
-      msgDiv.textContent = rawText; 
-      
-      msgBox.appendChild(msgDiv);
-      document.getElementById('last-msg-preview').textContent = "আপনি: " + rawText;
-      input.value = '';
-      msgBox.scrollTop = msgBox.scrollHeight;
-    }
-
+    function openChat(name) { document.getElementById('chatPartnerName').textContent = name; document.getElementById('chatRoom').classList.add('open'); }
+    function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
+    
     // অ্যান্টি-হ্যাক শিল্ড
-    (function antiTamperShield() {
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || 
-           (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
-           (e.ctrlKey && e.key === 'U')) {
-          e.preventDefault();
-          return false;
-        }
-      });
-
-      setInterval(function() {
-        const start = performance.now();
-        debugger;
-        if (performance.now() - start > 100) {
-          document.body.innerHTML = "<h2 style='text-align:center;margin-top:40vh;color:red;'>Security Alert: Unauthorized Inspection Blocked!</h2>";
-        }
-      }, 2000);
-    })();
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
-    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) e.preventDefault();
+    });
   </script>
 </body>
 </html>
