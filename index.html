@@ -3,42 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SuperChat BD - Encrypted</title>
+  <title>SuperChat BD</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body oncontextmenu="return false;">
 
-  <div id="authScreen" class="auth-screen">
+  <div id="wechatSplash" class="wechat-splash">
+    <div style="text-align:right; color:#aaa; font-size:13px;">🛡️ 256-Bit Protected</div>
+    <div class="earth-container"><div class="earth-glow"></div><div class="person-silhouette"></div></div>
+    <div class="welcome-btns">
+      <button class="w-btn w-login" onclick="openAuth('login')">Log In</button>
+      <button class="w-btn w-signup" onclick="openAuth('signup')">Sign Up</button>
+    </div>
+  </div>
+
+  <div id="authScreen" class="auth-screen" style="display:none;">
     <div class="auth-box">
-      <h2>🛡️ SuperChat BD</h2>
-      <p>সুরক্ষিত অ্যাকাউন্টে লগইন বা নতুন অ্যাকাউন্ট খুলুন</p>
-      <input type="email" id="authEmail" class="auth-input" placeholder="আপনার ইমেইল লিখুন">
+      <h2 id="authTitle">🛡️ Log In</h2>
+      <p>সুরক্ষিত অ্যাকাউন্ট তথ্য দিন</p>
+      <input type="email" id="authEmail" class="auth-input" placeholder="আপনার ইমেইল">
       <input type="password" id="authPass" class="auth-input" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
-      <p id="authError" style="color: red; font-size: 12px; margin-bottom: 10px;"></p>
-      <button class="auth-btn" onclick="loginUser()">লগইন করুন</button>
-      <button class="auth-btn secondary" onclick="registerUser()">নতুন অ্যাকাউন্ট খুলুন</button>
+      <p id="authError" style="color:red; font-size:12px; margin-bottom:10px;"></p>
+      <button type="button" class="auth-btn" id="btnLogin">Log In</button>
+      <button type="button" class="auth-btn secondary" id="btnRegister">Sign Up</button>
+      <button type="button" style="background:none; border:none; color:gray; margin-top:8px;" onclick="document.getElementById('authScreen').style.display='none'">বন্ধ করুন</button>
     </div>
   </div>
 
   <div class="header">
     <div class="header-title"><span>🛡️ SuperChat</span></div>
-    <button class="icon-btn" onclick="logoutUser()">লগআউট</button>
+    <button type="button" class="icon-btn" id="btnLogout">লগআউট</button>
   </div>
 
   <div class="content">
     <div id="chats" class="tab-page active">
       <div class="card" onclick="openChat('Global Encrypted Room')">
         <div class="avatar av-green">💬</div>
-        <div class="card-info">
-          <h4>Global Encrypted Room</h4>
-          <p id="last-msg-preview" style="color: #07C160; font-weight: 500;">লাইভ সার্ভার চ্যাটে প্রবেশ করুন...</p>
-        </div>
+        <div class="card-info"><h4>Global Encrypted Room</h4><p id="last-msg-preview" style="color:#07C160;">লাইভ চ্যাটে প্রবেশ করুন...</p></div>
       </div>
     </div>
-    <div id="contacts" class="tab-page"><div class="card"><div class="avatar av-blue">👥</div><div class="card-info"><h4>Verified Contacts</h4><p>সুরক্ষিত ইউজার তালিকা</p></div></div></div>
-    <div id="discover" class="tab-page"><div class="card"><div class="avatar av-purple">🎬</div><div class="card-info"><h4>Moments & Video Feed</h4><p>নিরাপদ ভিডিও শেয়ারিং ও মিনি-অ্যাপস</p></div></div></div>
-    <div id="me" class="tab-page"><div class="card"><div class="avatar av-orange">👤</div><div class="card-info"><h4 id="userEmailDisplay">User Profile</h4><p style="color: #07C160; font-weight: 500;">সার্ভার ভেরিফাইড অ্যাকাউন্ট 🔒</p></div></div></div>
+
+    <div id="contacts" class="tab-page">
+      <div class="card"><div class="avatar av-blue">👥</div><div class="card-info"><h4>Verified Contacts</h4><p>সুরক্ষিত ইউজার তালিকা</p></div></div>
+    </div>
+
+    <!-- নিরাপদ ভিডিও ফিড (Moments) -->
+    <div id="discover" class="tab-page">
+      <div class="video-box">
+        <h4 style="margin-bottom:8px;">🎬 নিরাপদ ভিডিও শেয়ার করুন (YouTube Link)</h4>
+        <input type="url" id="videoUrlInput" placeholder="YouTube ভিডিও লিংক পেস্ট করুন...">
+        <button type="button" class="auth-btn" id="btnPostVideo" style="padding:8px; font-size:14px;">পোস্ট করুন</button>
+      </div>
+      <div id="videoFeedList"></div>
+    </div>
+
+    <!-- সুরক্ষিত ওয়ালেট ও পিন -->
+    <div id="me" class="tab-page">
+      <div class="card">
+        <div class="avatar av-orange">💳</div>
+        <div class="card-info"><h4 id="userEmailDisplay">User Profile</h4><p style="color:#07C160;">Zero-Trust ওয়ালেট সক্রিয় 🔒</p></div>
+      </div>
+    </div>
   </div>
 
   <div class="bottom-nav">
@@ -51,15 +77,21 @@
   <div id="chatRoom" class="chat-room">
     <div class="header">
       <div class="header-title" onclick="closeChat()" style="cursor:pointer;">⬅️ <span id="chatPartnerName">Chat</span></div>
-      <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px;">Live 🔒</span>
+      <span style="font-size:12px;">Live 🔒</span>
     </div>
     <div id="chatMessages" class="chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="messageInput" class="chat-input" placeholder="রিয়েল-টাইম মেসেজ লিখুন..." maxlength="1000" onkeypress="if(event.key==='Enter') sendMessage()">
-      <button class="send-btn" onclick="sendMessage()">পাঠান</button>
+      <input type="text" id="messageInput" class="chat-input" placeholder="মেসেজ লিখুন..." maxlength="1000">
+      <button type="button" class="send-btn" id="btnSend">পাঠান</button>
     </div>
   </div>
 
+  <script>
+    function openAuth(m) { document.getElementById('authScreen').style.display='flex'; document.getElementById('authTitle').textContent = m==='login' ? '🛡️ Log In' : '🛡️ Sign Up'; }
+    function switchTab(id, title, btn) { document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); document.querySelector('.header-title span').textContent=title; }
+    function openChat(n) { document.getElementById('chatPartnerName').textContent=n; document.getElementById('chatRoom').classList.add('open'); }
+    function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
+  </script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
