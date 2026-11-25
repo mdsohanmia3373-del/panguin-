@@ -1,16 +1,10 @@
 {
-  "name": "penguin• Super App",
-  "short_name": "penguin•",
-  "start_url": "/panguin-/",
+  "name": "SuperChat BD",
+  "short_name": "SuperChat",
+  "start_url": "/panguin-/index.html",
   "scope": "/panguin-/",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#e60023",
-  "icons": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23e60023'/%3E%3Ctext x='50%25' y='58%25' font-size='280' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3Ep%3C/text%3E%3C/svg%3E",
-      "sizes": "512x512",
-      "type": "image/svg+xml"
-    }
-  ]
+  "background_color": "#02060d",
+  "theme_color": "#07C160",
+  "orientation": "portrait"
 }
