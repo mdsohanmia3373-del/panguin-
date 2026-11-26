@@ -5,332 +5,712 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SuperChat</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=99">
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --wc-bg: #111111;
+      --wc-surface: #191919;
+      --wc-surface-2: #222222;
+      --wc-border: #262626;
+      --wc-text: #e6e6e6;
+      --wc-muted: #8a8f98;
+      --wc-green: #07c160;
+      --wc-green-hover: #06ad56;
+      --wc-blue: #4da3ff;
+      --wc-danger: #fa5151;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101215;
-      color: #fff;
-      padding-bottom: 74px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--wc-bg);
+      color: var(--wc-text);
+      padding-bottom: 68px;
+      overflow-x: hidden;
     }
-    .sc-header {
-      position: sticky; top: 0; z-index: 20;
-      background: #171a1f; border-bottom: 1px solid #262b33;
-      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+
+    /* Top WeChat Bar */
+    .wc-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 25;
+      height: 52px;
+      background: var(--wc-surface);
+      border-bottom: 1px solid var(--wc-border);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .sc-header-title { font-size: 18px; font-weight: 700; }
-    .sc-logout-btn {
-      background: #242932; color: #ff6b6b; border: 1px solid #343b47;
-      padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+    .wc-topbar-title {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
-    .sc-content { padding: 14px; }
-    .sc-tab-page { display: none; }
-    .sc-tab-page.active { display: block; }
-    .sc-card {
-      background: #181b20; border: 1px solid #262b33; border-radius: 10px;
-      padding: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+    .wc-topbar-action {
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      border: 1px solid var(--wc-border);
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
     }
-    .sc-card.static-card { cursor: default; }
-    .sc-avatar {
-      width: 44px; height: 44px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 19px; font-weight: 700; flex-shrink: 0;
+
+    /* Main Pages */
+    .wc-main { padding: 0; }
+    .wc-page { display: none; }
+    .wc-page.active { display: block; }
+
+    /* Search / Filter Bar (WeChat style) */
+    .wc-search-wrap {
+      padding: 10px 14px;
+      background: var(--wc-bg);
+      border-bottom: 1px solid var(--wc-border);
     }
-    .av-green { background: rgba(7, 193, 96, 0.16); color: #07C160; }
-    .av-blue { background: rgba(77, 163, 255, 0.16); color: #4da3ff; }
-    .av-orange { background: rgba(255, 159, 67, 0.16); color: #ff9f43; }
-    .av-pink { background: rgba(232, 67, 147, 0.18); color: #ff6bb5; }
-    .sc-box {
-      background: #181b20; border: 1px solid #262b33; border-radius: 10px;
-      padding: 14px; margin-bottom: 14px;
+    .wc-search-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      font-size: 14px;
+      outline: none;
     }
-    .sc-box h4 { margin: 0 0 10px; font-size: 15px; }
-    .sc-input, .sc-select {
-      width: 100%; padding: 11px 12px; margin-bottom: 10px;
-      background: #111317; border: 1px solid #2b313c; border-radius: 8px;
-      color: #fff; font-size: 14px; outline: none;
+    .wc-search-input::placeholder { color: var(--wc-muted); text-align: center; }
+
+    /* List Rows (WeChat Style) */
+    .wc-section-label {
+      padding: 10px 16px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--wc-muted);
+      background: var(--wc-bg);
     }
-    .sc-input::placeholder { color: #6e7785; }
-    .sc-btn-green {
-      width: 100%; padding: 11px; border: none; border-radius: 8px;
-      background: #07C160; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+    .wc-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--wc-surface);
+      border-bottom: 1px solid var(--wc-border);
+      cursor: pointer;
     }
-    .sc-btn-outline {
-      padding: 7px 10px; border-radius: 6px; border: 1px solid #2e3542;
-      background: #20252e; color: #dce3ec; font-size: 12px; font-weight: 600; cursor: pointer;
+    .wc-row:active { background: var(--wc-surface-2); }
+    .wc-row.static { cursor: default; }
+    .wc-row.static:active { background: var(--wc-surface); }
+
+    .wc-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: var(--wc-surface-2);
+      color: #fff;
     }
-    .sc-btn-danger {
-      padding: 7px 10px; border-radius: 6px; border: 1px solid #59262b;
-      background: rgba(255, 77, 79, 0.14); color: #ff7875; font-size: 12px; font-weight: 600; cursor: pointer;
+    .wc-avatar.green { background: rgba(7, 193, 96, 0.16); color: var(--wc-green); }
+    .wc-avatar.blue { background: rgba(77, 163, 255, 0.16); color: var(--wc-blue); }
+    .wc-avatar.gold { background: rgba(245, 166, 35, 0.16); color: #f5a623; }
+    .wc-avatar.rose { background: rgba(250, 81, 81, 0.16); color: #ff7875; }
+
+    .wc-row-body { flex: 1; min-width: 0; }
+    .wc-row-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--wc-text);
+      margin: 0 0 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .sc-bottom-nav {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-      background: #171a1f; border-top: 1px solid #262b33;
-      display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 0;
+    .wc-row-sub {
+      font-size: 12px;
+      color: var(--wc-muted);
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .sc-nav-btn {
-      background: none; border: none; color: #8c96a6;
-      font-size: 11px; font-weight: 600; padding: 4px 2px; cursor: pointer; line-height: 1.35;
+    .wc-row-sub.highlight { color: var(--wc-green); }
+
+    /* Form Panel inside Sections */
+    .wc-panel {
+      margin: 12px 14px;
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--wc-surface);
+      border: 1px solid var(--wc-border);
     }
-    .sc-nav-btn.active { color: #07C160; }
-    .sc-chat-room {
-      position: fixed; inset: 0; z-index: 60;
-      background: #101215; display: none; flex-direction: column;
+    .wc-panel-title {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--wc-text);
     }
-    .sc-chat-room.open { display: flex; }
-    .sc-chat-messages {
-      flex: 1; overflow-y: auto; padding: 14px;
-      display: flex; flex-direction: column; gap: 8px;
+    .wc-input, .wc-select {
+      width: 100%;
+      padding: 11px 12px;
+      margin-bottom: 10px;
+      border-radius: 7px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      font-size: 14px;
+      outline: none;
     }
-    .sc-msg {
-      max-width: 78%; padding: 9px 12px; border-radius: 10px; font-size: 14px; word-break: break-word;
+    .wc-input::placeholder { color: var(--wc-muted); }
+
+    .wc-btn-green {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 7px;
+      background: var(--wc-green);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .sc-msg.me { align-self: flex-end; background: #07C160; color: #fff; }
-    .sc-msg.other { align-self: flex-start; background: #1e222a; color: #fff; }
-    .sc-msg-sender { font-size: 11px; opacity: 0.8; margin-bottom: 3px; }
-    .sc-chat-input-area {
-      display: flex; gap: 8px; padding: 10px; background: #171a1f; border-top: 1px solid #262b33;
+    .wc-btn-green:active { background: var(--wc-green-hover); }
+
+    .wc-btn-sm {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .sc-chat-input {
-      flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #2b313c;
-      background: #111317; color: #fff; font-size: 14px; outline: none;
+    .wc-btn-sm.accept {
+      background: var(--wc-green);
+      border-color: var(--wc-green);
+      color: #fff;
     }
-    .sc-send-btn {
-      padding: 0 16px; border: none; border-radius: 8px;
-      background: #07C160; color: #fff; font-weight: 700; cursor: pointer;
+    .wc-btn-sm.reject {
+      background: rgba(250, 81, 81, 0.15);
+      border-color: rgba(250, 81, 81, 0.35);
+      color: #ff7875;
     }
-    .sc-splash {
-      position: fixed; inset: 0; z-index: 999;
-      background: radial-gradient(circle at 50% 35%, #1d2b3a 0%, #0b0d10 70%);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 28px 20px 44px;
+
+    .wc-feedback {
+      margin-top: 8px;
+      font-size: 12px;
+      min-height: 16px;
+      font-weight: 600;
     }
-    .sc-brand { position: absolute; top: 18%; left: 0; right: 0; text-align: center; }
-    .sc-brand h1 { margin: 0; font-size: 30px; color: #fff; }
-    .sc-brand p { margin: 6px 0 0; font-size: 13px; color: #9aa4b2; }
-    .sc-btn-stack { display: flex; flex-direction: column; gap: 12px; }
-    .sc-btn-dark {
-      width: 100%; padding: 14px; border: 1px solid #2b3038; border-radius: 8px;
-      background: #1c1f24; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+
+    /* Bottom Navigation (WeChat 4-Tab Bar) */
+    .wc-bottombar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      height: 58px;
+      background: var(--wc-surface);
+      border-top: 1px solid var(--wc-border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
     }
-    .sc-modal {
-      position: fixed; inset: 0; z-index: 1000;
-      background: #121212; color: #fff;
-      display: none; flex-direction: column; padding: 20px; overflow-y: auto;
+    .wc-tab {
+      background: none;
+      border: none;
+      color: var(--wc-muted);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
     }
-    .sc-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .sc-close-btn { background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; }
-    .sc-error { color: #ff4d4f; font-size: 13px; min-height: 18px; margin-top: 8px; font-weight: 600; }
-    .sc-status { color: #07C160; font-size: 12px; margin-top: 6px; min-height: 16px; }
-    .sc-badge {
-      display: inline-block; padding: 3px 8px; border-radius: 999px;
-      font-size: 11px; font-weight: 700; background: rgba(7, 193, 96, 0.16); color: #07C160;
+    .wc-tab span.ico { font-size: 18px; line-height: 1; }
+    .wc-tab.active { color: var(--wc-green); }
+
+    /* Chat Room Overlay */
+    .wc-chatroom {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: var(--wc-bg);
+      display: none;
+      flex-direction: column;
+    }
+    .wc-chatroom.open { display: flex; }
+    .wc-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .wc-bubble {
+      max-width: 78%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .wc-bubble.me {
+      align-self: flex-end;
+      background: var(--wc-green);
+      color: #fff;
+    }
+    .wc-bubble.other {
+      align-self: flex-start;
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      border: 1px solid var(--wc-border);
+    }
+    .wc-bubble-meta {
+      font-size: 11px;
+      opacity: 0.78;
+      margin-bottom: 3px;
+    }
+    .wc-composer {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--wc-surface);
+      border-top: 1px solid var(--wc-border);
+    }
+    .wc-msg-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      font-size: 14px;
+      outline: none;
+    }
+    .wc-send-btn {
+      padding: 0 16px;
+      border: none;
+      border-radius: 6px;
+      background: var(--wc-green);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* WeChat-style Splash & Auth Screens */
+    .wc-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: radial-gradient(circle at 50% 34%, #1d2630 0%, #0d0e10 72%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px 20px 42px;
+    }
+    .wc-splash-hero {
+      position: absolute;
+      top: 17%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .wc-splash-logo {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 14px;
+      border-radius: 16px;
+      background: rgba(7, 193, 96, 0.16);
+      border: 1px solid rgba(7, 193, 96, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+    }
+    .wc-splash-hero h1 { margin: 0; font-size: 28px; font-weight: 700; }
+    .wc-splash-hero p { margin: 6px 0 0; font-size: 13px; color: var(--wc-muted); }
+
+    .wc-auth-actions { display: flex; flex-direction: column; gap: 12px; }
+    .wc-btn-secondary {
+      width: 100%;
+      padding: 13px;
+      border-radius: 8px;
+      border: 1px solid var(--wc-border);
+      background: var(--wc-surface-2);
+      color: var(--wc-text);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .wc-btn-ghost {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--wc-muted);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .wc-auth-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--wc-bg);
+      display: none;
+      flex-direction: column;
+      padding: 18px 20px 28px;
+      overflow-y: auto;
+    }
+    .wc-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .wc-close-x {
+      background: none;
+      border: none;
+      color: var(--wc-text);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .wc-modal-heading {
+      margin: 0 0 22px;
+      font-size: 22px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .wc-line-field {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 2px;
+      border-bottom: 1px solid var(--wc-border);
+    }
+    .wc-line-label {
+      width: 106px;
+      font-size: 14px;
+      color: var(--wc-muted);
+      flex-shrink: 0;
+    }
+    .wc-line-input, .wc-line-select {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--wc-text);
+      font-size: 15px;
+    }
+    .wc-line-select option { background: var(--wc-surface); color: var(--wc-text); }
+    .wc-line-input::placeholder { color: #5f656d; }
+
+    .wc-verify-card {
+      margin-top: 16px;
+      padding: 24px 18px;
+      border-radius: 12px;
+      background: var(--wc-surface);
+      border: 1px solid var(--wc-border);
+      text-align: center;
+    }
+    .wc-info-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--wc-blue);
+      color: var(--wc-blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
     }
   </style>
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- Welcome Screen -->
-  <div id="scSplash" class="sc-splash">
-    <div class="sc-brand">
+  <!-- 1. Welcome Screen -->
+  <div id="wcSplash" class="wc-splash">
+    <div class="wc-splash-hero">
+      <div class="wc-splash-logo">💬</div>
       <h1>SuperChat</h1>
-      <p>Verified Chat, Contacts &amp; MFS Hub</p>
+      <p>WeChat-Style Messaging, Verified Contacts &amp; MFS Hub</p>
     </div>
-    <div class="sc-btn-stack">
-      <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="openLoginModal()">Log In</button>
-      <button type="button" class="sc-btn-dark" onclick="openSignupModal()">Sign Up</button>
-    </div>
-  </div>
-
-  <!-- Log In Modal -->
-  <div id="scLoginModal" class="sc-modal">
-    <div class="sc-top-bar">
-      <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
-      <span style="font-size:13px; color:#9aa4b2;">Mobile Log In</span>
-    </div>
-    <h2 style="margin:0 0 18px; text-align:center;">Log In Via Mobile Number</h2>
-    <select id="loginCountry" class="sc-select">
-      <option value="+880" selected>Bangladesh (+880)</option>
-      <option value="+91">India (+91)</option>
-      <option value="+1">United States (+1)</option>
-      <option value="+44">United Kingdom (+44)</option>
-      <option value="+966">Saudi Arabia (+966)</option>
-      <option value="+971">UAE (+971)</option>
-    </select>
-    <input type="tel" id="loginPhone" class="sc-input" placeholder="Enter mobile number (e.g. 01712345678)">
-    <input type="password" id="loginPass" class="sc-input" placeholder="Enter password">
-    <div id="loginError" class="sc-error"></div>
-    <div style="margin-top:auto;">
-      <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="handleLogin()">Log In</button>
+    <div class="wc-auth-actions">
+      <button type="button" class="wc-btn-green" style="padding:14px; font-size:15px;" onclick="openLogin()">Log In</button>
+      <button type="button" class="wc-btn-secondary" onclick="openSignup()">Sign Up</button>
+      <button type="button" class="wc-btn-ghost" onclick="closeSplashOnly()">Cancel</button>
     </div>
   </div>
 
-  <!-- Sign Up Modal -->
-  <div id="scSignupModal" class="sc-modal">
-    <div class="sc-top-bar">
-      <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
-      <span style="font-size:13px; color:#9aa4b2;">Verified Registration</span>
+  <!-- 2. Log In Via Mobile Number -->
+  <div id="wcLoginModal" class="wc-auth-modal">
+    <div class="wc-modal-head">
+      <button type="button" class="wc-close-x" onclick="backToSplash()">✕</button>
+      <span style="font-size:12px; color:var(--wc-muted);">Log In</span>
     </div>
-    <h2 style="margin:0 0 18px; text-align:center;">Sign Up Via Phone Number</h2>
-    <input type="text" id="signupName" class="sc-input" placeholder="Your Full Name">
-    <select id="signupCountry" class="sc-select">
-      <option value="+880" selected>Bangladesh (+880)</option>
-      <option value="+91">India (+91)</option>
-      <option value="+1">United States (+1)</option>
-      <option value="+44">United Kingdom (+44)</option>
-      <option value="+966">Saudi Arabia (+966)</option>
-      <option value="+971">UAE (+971)</option>
-    </select>
-    <input type="tel" id="signupPhone" class="sc-input" placeholder="Enter mobile number (e.g. 01712345678)">
-    <input type="password" id="signupPass" class="sc-input" placeholder="Set password (min 6 chars)">
-    <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#b8c0cc; margin-top:6px;">
-      <input type="checkbox" id="signupAgree">
-      <span>I accept SuperChat Terms &amp; Anti-Fraud Policy</span>
+    <h2 class="wc-modal-heading">Log In Via Mobile Number</h2>
+
+    <div class="wc-line-field">
+      <div class="wc-line-label">Country/Region</div>
+      <select id="loginCountry" class="wc-line-select">
+        <option value="+880" selected>Bangladesh (+880)</option>
+        <option value="+91">India (+91)</option>
+        <option value="+1">United States (+1)</option>
+        <option value="+44">United Kingdom (+44)</option>
+        <option value="+966">Saudi Arabia (+966)</option>
+        <option value="+971">UAE (+971)</option>
+      </select>
+    </div>
+    <div class="wc-line-field">
+      <div class="wc-line-label">Mobile Number</div>
+      <input type="tel" id="loginPhone" class="wc-line-input" placeholder="Enter phone number">
+    </div>
+    <div class="wc-line-field">
+      <div class="wc-line-label">Password</div>
+      <input type="password" id="loginPass" class="wc-line-input" placeholder="Enter SuperChat password">
+    </div>
+
+    <div id="loginError" class="wc-feedback" style="color:var(--wc-danger);"></div>
+
+    <div style="margin-top:auto; padding-top:20px;">
+      <button type="button" class="wc-btn-green" style="padding:14px; font-size:15px;" onclick="handleLogin()">Log In</button>
+    </div>
+  </div>
+
+  <!-- 3. Sign Up Via Phone Number -->
+  <div id="wcSignupModal" class="wc-auth-modal">
+    <div class="wc-modal-head">
+      <button type="button" class="wc-close-x" onclick="backToSplash()">✕</button>
+      <span style="font-size:12px; color:var(--wc-muted);">Sign Up</span>
+    </div>
+    <h2 class="wc-modal-heading">Sign up via phone number</h2>
+
+    <div class="wc-line-field">
+      <div class="wc-line-label">Name</div>
+      <input type="text" id="signupName" class="wc-line-input" placeholder="Enter alias">
+    </div>
+    <div class="wc-line-field">
+      <div class="wc-line-label">Country/Region</div>
+      <select id="signupCountry" class="wc-line-select">
+        <option value="+880" selected>Bangladesh (+880)</option>
+        <option value="+91">India (+91)</option>
+        <option value="+1">United States (+1)</option>
+        <option value="+44">United Kingdom (+44)</option>
+        <option value="+966">Saudi Arabia (+966)</option>
+        <option value="+971">UAE (+971)</option>
+      </select>
+    </div>
+    <div class="wc-line-field">
+      <div class="wc-line-label">Mobile Number</div>
+      <input type="tel" id="signupPhone" class="wc-line-input" placeholder="Enter phone number">
+    </div>
+    <div class="wc-line-field">
+      <div class="wc-line-label">Password</div>
+      <input type="password" id="signupPass" class="wc-line-input" placeholder="Set password (min 6 chars)">
+    </div>
+
+    <label style="display:flex; align-items:flex-start; gap:10px; margin-top:18px; font-size:12px; color:var(--wc-muted); line-height:1.45;">
+      <input type="checkbox" id="signupAgree" style="margin-top:2px;">
+      <span>I have read and accept the <a href="#" onclick="openPolicy(event)" style="color:var(--wc-blue); text-decoration:none;">《SuperChat - Terms of Service &amp; Privacy Policy》</a></span>
     </label>
-    <div id="signupError" class="sc-error"></div>
-    <div style="margin-top:auto;">
-      <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="handleRegister()">Create Verified Account</button>
+
+    <div id="signupError" class="wc-feedback" style="color:var(--wc-danger);"></div>
+
+    <div style="margin-top:auto; padding-top:20px;">
+      <button type="button" class="wc-btn-green" style="padding:14px; font-size:15px;" onclick="openSecurityStep()">Accept and Continue</button>
     </div>
   </div>
 
-  <!-- Header -->
-  <div class="sc-header">
-    <div class="sc-header-title"><span>SuperChat</span></div>
-    <button type="button" class="sc-logout-btn" onclick="handleLogout()">Log Out</button>
+  <!-- 4. Security Verification -->
+  <div id="wcVerifyModal" class="wc-auth-modal">
+    <div class="wc-modal-head">
+      <button type="button" class="wc-close-x" onclick="openSignup()">✕</button>
+      <span></span>
+    </div>
+    <div class="wc-verify-card">
+      <div class="wc-info-circle">i</div>
+      <h3 style="margin:0 0 10px; font-size:19px;">Security Verification</h3>
+      <p style="margin:0 0 18px; font-size:13px; color:var(--wc-muted); line-height:1.5;">
+        In order to protect SuperChat from spammers, this registration requires verification to prove you are a human.
+      </p>
+      <label style="display:inline-flex; align-items:center; gap:8px; font-size:13px; margin-bottom:18px; cursor:pointer;">
+        <input type="checkbox" id="humanCheck">
+        <span>I am a human</span>
+      </label>
+      <div id="verifyError" class="wc-feedback" style="color:var(--wc-danger); margin-bottom:10px;"></div>
+      <button type="button" class="wc-btn-green" onclick="completeSignup()">Start</button>
+    </div>
   </div>
 
-  <!-- Content -->
-  <div class="sc-content">
-    <!-- CHATS TAB -->
-    <div id="chats" class="sc-tab-page active">
-      <div class="sc-card" onclick="openChat('global_chat', 'Global Verified Room')">
-        <div class="sc-avatar av-green">💬</div>
-        <div style="flex:1;">
-          <h4 style="margin:0 0 4px;">Global Verified Room</h4>
-          <p style="margin:0; font-size:12px; color:#07C160;">Registered users room</p>
+  <!-- 5. Privacy Policy -->
+  <div id="wcPolicyModal" class="wc-auth-modal">
+    <div class="wc-modal-head">
+      <button type="button" class="wc-close-x" onclick="openSignup()">✕</button>
+      <span style="font-size:12px; color:var(--wc-muted);">Privacy Policy</span>
+    </div>
+    <div class="wc-panel" style="margin:0;">
+      <h4 class="wc-panel-title">SUMMARY</h4>
+      <p style="margin:0; font-size:13px; color:var(--wc-muted); line-height:1.6;">
+        Thank you for using SuperChat. Registered phone numbers are verified before friend requests are sent, and private chats only open between accepted friends.
+      </p>
+    </div>
+    <div style="margin-top:auto; padding-top:20px;">
+      <button type="button" class="wc-btn-green" onclick="acceptPolicy()">I have read and acknowledge the Privacy Policy</button>
+    </div>
+  </div>
+
+  <!-- Main Topbar -->
+  <div class="wc-topbar">
+    <div class="wc-topbar-title" id="topTitle">Chats</div>
+    <button type="button" class="wc-topbar-action" onclick="handleLogout()">Log Out</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="wc-main">
+    <!-- CHATS -->
+    <div id="tab-chats" class="wc-page active">
+      <div class="wc-search-wrap">
+        <input type="text" id="chatSearchInput" class="wc-search-input" placeholder="Search accepted chats..." oninput="renderAcceptedChats()">
+      </div>
+      <div class="wc-section-label">Rooms &amp; Verified Chats</div>
+      <div class="wc-row" onclick="openChat('global_chat', 'Global Room')">
+        <div class="wc-avatar green">💬</div>
+        <div class="wc-row-body">
+          <div class="wc-row-title">Global Room</div>
+          <div class="wc-row-sub highlight">Verified community chat</div>
         </div>
       </div>
-      <div class="sc-box" style="padding:10px 12px;">
-        <div style="font-size:12px; color:#9aa4b2;">
-          Random or unverified numbers cannot start private chats. Only <b>Accepted Friends</b> appear below.
-        </div>
-      </div>
-      <div id="acceptedChatList"></div>
+      <div id="acceptedChatsContainer"></div>
     </div>
 
-    <!-- CONTACTS & FRIEND REQUESTS TAB -->
-    <div id="contacts" class="sc-tab-page">
-      <div class="sc-box">
-        <h4>Send Friend Request (Registered Numbers Only)</h4>
-        <input type="tel" id="requestPhoneInput" class="sc-input" placeholder="Enter registered mobile number (e.g. 01712345678)">
-        <button type="button" class="sc-btn-green" onclick="sendFriendRequest()">Verify &amp; Send Request</button>
-        <div id="requestFeedback" class="sc-status"></div>
+    <!-- CONTACTS -->
+    <div id="tab-contacts" class="wc-page">
+      <div class="wc-panel">
+        <h4 class="wc-panel-title">Add Verified Friend (Request Required)</h4>
+        <input type="tel" id="friendReqPhone" class="wc-input" placeholder="Registered mobile number (e.g. 01712345678)">
+        <button type="button" class="wc-btn-green" onclick="sendFriendRequest()">Send Friend Request</button>
+        <div id="friendReqStatus" class="wc-feedback"></div>
       </div>
 
-      <div class="sc-box">
-        <h4>Incoming Friend Requests</h4>
-        <div id="incomingRequestsList"></div>
-      </div>
+      <div class="wc-section-label">Incoming Requests</div>
+      <div id="incomingReqContainer"></div>
 
-      <div class="sc-box">
-        <h4>Sent Requests</h4>
-        <div id="outgoingRequestsList"></div>
-      </div>
+      <div class="wc-section-label">Outgoing Requests</div>
+      <div id="outgoingReqContainer"></div>
 
-      <div class="sc-box">
-        <h4>Accepted Friends &amp; Contact Numbers</h4>
-        <div id="acceptedFriendsList"></div>
-      </div>
+      <div class="wc-section-label">Contacts &amp; Phone Numbers</div>
+      <div id="contactsContainer"></div>
     </div>
 
-    <!-- WALLET TAB: bKash, Nagad, Rocket & Crespo Wallet -->
-    <div id="wallet" class="sc-tab-page">
-      <div class="sc-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <h4 style="margin:0;">bKash, Nagad &amp; Rocket Accounts</h4>
-          <span class="sc-badge">MFS Hub</span>
-        </div>
-        <select id="mfsProviderSelect" class="sc-select">
+    <!-- WALLET (bKash, Nagad, Rocket, Crespo) -->
+    <div id="tab-wallet" class="wc-page">
+      <div class="wc-panel">
+        <h4 class="wc-panel-title">bKash • Nagad • Rocket Accounts</h4>
+        <select id="mfsProvider" class="wc-select">
           <option value="bKash">bKash</option>
           <option value="Nagad">Nagad</option>
           <option value="Rocket">Rocket</option>
         </select>
-        <input type="tel" id="mfsNumberInput" class="sc-input" placeholder="11-digit BD number (01XXXXXXXXX)">
-        <select id="mfsTypeSelect" class="sc-select">
+        <input type="tel" id="mfsNumber" class="wc-input" placeholder="11-digit BD number (01XXXXXXXXX)">
+        <select id="mfsRole" class="wc-select">
           <option value="Personal">Personal</option>
           <option value="Merchant">Merchant</option>
           <option value="Agent">Agent</option>
         </select>
-        <button type="button" class="sc-btn-green" onclick="saveMfsAccount()">Save MFS Account</button>
-        <div id="mfsAccountsList" style="margin-top:12px;"></div>
+        <button type="button" class="wc-btn-green" onclick="saveMfsAccount()">Save bKash / Nagad / Rocket</button>
+        <div id="mfsListContainer" style="margin-top:12px;"></div>
       </div>
 
-      <div class="sc-box">
-        <h4>Crespo Wallet</h4>
-        <input type="text" id="crespoAddressInput" class="sc-input" placeholder="Crespo Wallet Address / ID">
-        <input type="text" id="crespoBalanceInput" class="sc-input" placeholder="Balance note (e.g. 250.00 CRSP)">
-        <button type="button" class="sc-btn-green" onclick="saveCrespoWallet()">Save Crespo Wallet</button>
-        <div id="crespoWalletCard" style="margin-top:12px;"></div>
+      <div class="wc-panel">
+        <h4 class="wc-panel-title">Crespo Wallet</h4>
+        <input type="text" id="crespoId" class="wc-input" placeholder="Crespo Wallet ID / Address">
+        <input type="text" id="crespoBal" class="wc-input" placeholder="Balance label (e.g. 150.00 CRSP)">
+        <button type="button" class="wc-btn-green" onclick="saveCrespo()">Save Crespo Wallet</button>
+        <div id="crespoCardContainer" style="margin-top:12px;"></div>
       </div>
 
-      <div class="sc-box">
-        <h4>Send Money / Payment Log (bKash • Nagad • Rocket • Crespo)</h4>
-        <select id="payChannelSelect" class="sc-select">
+      <div class="wc-panel">
+        <h4 class="wc-panel-title">Send / Log Payment (bKash • Nagad • Rocket • Crespo)</h4>
+        <select id="payMethod" class="wc-select">
           <option value="bKash">bKash</option>
           <option value="Nagad">Nagad</option>
           <option value="Rocket">Rocket</option>
           <option value="Crespo Wallet">Crespo Wallet</option>
         </select>
-        <input type="text" id="payReceiverInput" class="sc-input" placeholder="Receiver Number (01XXXXXXXXX) or Wallet ID">
-        <input type="number" id="payAmountInput" class="sc-input" placeholder="Amount (BDT / Token)">
-        <input type="text" id="payTrxRefInput" class="sc-input" placeholder="Transaction / Gateway Ref ID (optional)">
-        <button type="button" class="sc-btn-green" onclick="initiatePayment()">Submit Transaction Record</button>
-        <div id="paymentHistoryList" style="margin-top:12px;"></div>
+        <input type="text" id="payTo" class="wc-input" placeholder="Receiver Number (01XXXXXXXXX) or Crespo ID">
+        <input type="number" id="payAmt" class="wc-input" placeholder="Amount">
+        <input type="text" id="payTrx" class="wc-input" placeholder="Transaction / Reference ID (optional)">
+        <button type="button" class="wc-btn-green" onclick="addPaymentLog()">Record Transaction</button>
+        <div id="payLogContainer" style="margin-top:12px;"></div>
       </div>
     </div>
 
-    <!-- ME TAB -->
-    <div id="me" class="sc-tab-page">
-      <div class="sc-card static-card">
-        <div class="sc-avatar av-orange">👤</div>
-        <div>
-          <h4 id="meNameDisplay" style="margin:0 0 4px;">User</h4>
-          <p id="mePhoneDisplay" style="margin:0; font-size:13px; color:#07C160;">+880...</p>
+    <!-- ME -->
+    <div id="tab-me" class="wc-page">
+      <div class="wc-row static" style="margin-top:8px;">
+        <div class="wc-avatar gold">👤</div>
+        <div class="wc-row-body">
+          <div class="wc-row-title" id="meName">SuperChat User</div>
+          <div class="wc-row-sub highlight" id="mePhone">+880...</div>
         </div>
       </div>
-      <div class="sc-box">
-        <h4>Security &amp; Payment Notice</h4>
-        <p style="margin:0; font-size:13px; color:#c7d0dc; line-height:1.6;">
-          Live bKash, Nagad, and Rocket money movement requires verified merchant API credentials running on a secure backend server (Node.js / Firebase Cloud Functions) plus Firestore security rules.
-        </p>
+      <div class="wc-section-label">Account &amp; Payment Summary</div>
+      <div class="wc-row static">
+        <div class="wc-row-body">
+          <div class="wc-row-sub" id="meStats" style="white-space:normal; line-height:1.6;">Loading summary...</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Navigation -->
-  <div class="sc-bottom-nav">
-    <button type="button" class="sc-nav-btn active" onclick="switchTab('chats', 'SuperChat', this)">💬<br>Chats</button>
-    <button type="button" class="sc-nav-btn" onclick="switchTab('contacts', 'Contacts', this)">📒<br>Contacts</button>
-    <button type="button" class="sc-nav-btn" onclick="switchTab('wallet', 'Wallet & MFS', this)">💳<br>Wallet</button>
-    <button type="button" class="sc-nav-btn" onclick="switchTab('me', 'Me', this)">⚙️<br>Me</button>
+  <!-- Bottom 4-Tab Bar -->
+  <div class="wc-bottombar">
+    <button type="button" class="wc-tab active" onclick="switchWcTab('tab-chats', 'Chats', this)">
+      <span class="ico">💬</span>
+      <span>Chats</span>
+    </button>
+    <button type="button" class="wc-tab" onclick="switchWcTab('tab-contacts', 'Contacts', this)">
+      <span class="ico">📒</span>
+      <span>Contacts</span>
+    </button>
+    <button type="button" class="wc-tab" onclick="switchWcTab('tab-wallet', 'Wallet', this)">
+      <span class="ico">💳</span>
+      <span>Wallet</span>
+    </button>
+    <button type="button" class="wc-tab" onclick="switchWcTab('tab-me', 'Me', this)">
+      <span class="ico">👤</span>
+      <span>Me</span>
+    </button>
   </div>
 
   <!-- Chat Room -->
-  <div id="chatRoom" class="sc-chat-room">
-    <div class="sc-header">
-      <div style="cursor:pointer; font-weight:700;" onclick="closeChat()">⬅️ <span id="chatPartnerName">Chat</span></div>
-      <span style="font-size:12px; color:#07C160;">Verified Room</span>
+  <div id="wcChatroom" class="wc-chatroom">
+    <div class="wc-topbar">
+      <div style="font-weight:700; cursor:pointer;" onclick="closeWcChat()">‹ <span id="roomTitle">Chat</span></div>
+      <span style="font-size:12px; color:var(--wc-green);">Verified</span>
     </div>
-    <div id="chatMessages" class="sc-chat-messages"></div>
-    <div class="sc-chat-input-area">
-      <input type="text" id="messageInput" class="sc-chat-input" placeholder="Type a message..." maxlength="1000">
-      <button type="button" class="sc-send-btn" onclick="handleSend()">Send</button>
+    <div id="wcMessages" class="wc-messages"></div>
+    <div class="wc-composer">
+      <input type="text" id="wcMsgInput" class="wc-msg-input" placeholder="Type a message..." maxlength="1000">
+      <button type="button" class="wc-send-btn" onclick="sendWcMessage()">Send</button>
     </div>
   </div>
 
@@ -354,19 +734,20 @@
 
     let currentUser = null;
     let currentProfile = null;
-    let currentRoomId = null;
-    let unsubscribeChat = null;
-    let unsubscribeIncoming = null;
-    let unsubscribeOutgoing = null;
+    let activeRoomId = null;
+    let unsubRoom = null;
+    let unsubIn = null;
+    let unsubOut = null;
+    let draftSignup = null;
     let acceptedFriends = [];
 
-    function normalizePhone(countryCode, rawPhone) {
-      let digits = (rawPhone || '').replace(/\D/g, '');
-      const ccDigits = (countryCode || '+880').replace(/\D/g, '');
+    function normalizePhone(cc, raw) {
+      let digits = (raw || '').replace(/\D/g, '');
+      const ccDigits = (cc || '+880').replace(/\D/g, '');
       if (!digits) return null;
 
       if (digits.startsWith(ccDigits)) {
-        // already includes country code
+        // already prefixed
       } else if (ccDigits === '880' && digits.startsWith('0')) {
         digits = '880' + digits.slice(1);
       } else {
@@ -377,56 +758,54 @@
       if (digits.length < 10) return null;
 
       return {
-        digits: digits,
+        digits,
         display: '+' + digits,
         authId: digits + '@superchat.phone'
       };
     }
 
-    function openLoginModal() {
-      document.getElementById('scSplash').style.display = 'none';
-      document.getElementById('scSignupModal').style.display = 'none';
-      document.getElementById('loginError').textContent = '';
-      document.getElementById('scLoginModal').style.display = 'flex';
+    function hideAuthModals() {
+      ['wcLoginModal', 'wcSignupModal', 'wcVerifyModal', 'wcPolicyModal'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
     }
 
-    function openSignupModal() {
-      document.getElementById('scSplash').style.display = 'none';
-      document.getElementById('scLoginModal').style.display = 'none';
-      document.getElementById('signupError').textContent = '';
-      document.getElementById('scSignupModal').style.display = 'flex';
+    function closeSplashOnly() {
+      hideAuthModals();
+      document.getElementById('wcSplash').style.display = 'none';
     }
 
     function backToSplash() {
-      document.getElementById('scLoginModal').style.display = 'none';
-      document.getElementById('scSignupModal').style.display = 'none';
-      if (!currentUser) {
-        document.getElementById('scSplash').style.display = 'flex';
-      }
+      hideAuthModals();
+      if (!currentUser) document.getElementById('wcSplash').style.display = 'flex';
     }
 
-    async function ensureUserDirectoryDoc(user, fallbackName, fallbackPhoneObj) {
-      const digits = fallbackPhoneObj
-        ? fallbackPhoneObj.digits
-        : ((user.email || '').split('@')[0] || '');
-      const displayPhone = fallbackPhoneObj ? fallbackPhoneObj.display : ('+' + digits);
-      const name = fallbackName || user.displayName || displayPhone;
-
-      const profile = {
-        uid: user.uid,
-        name: name,
-        phoneDigits: digits,
-        phoneDisplay: displayPhone,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      await db.collection('users').doc(user.uid).set(profile, { merge: true });
-      currentProfile = { ...profile, uid: user.uid };
-      document.getElementById('meNameDisplay').textContent = name;
-      document.getElementById('mePhoneDisplay').textContent = displayPhone;
+    function openLogin() {
+      document.getElementById('wcSplash').style.display = 'none';
+      hideAuthModals();
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('wcLoginModal').style.display = 'flex';
     }
 
-    async function handleRegister() {
+    function openSignup() {
+      document.getElementById('wcSplash').style.display = 'none';
+      hideAuthModals();
+      document.getElementById('signupError').textContent = '';
+      document.getElementById('wcSignupModal').style.display = 'flex';
+    }
+
+    function openPolicy(e) {
+      e.preventDefault();
+      hideAuthModals();
+      document.getElementById('wcPolicyModal').style.display = 'flex';
+    }
+
+    function acceptPolicy() {
+      document.getElementById('signupAgree').checked = true;
+      openSignup();
+    }
+
+    function openSecurityStep() {
       const name = document.getElementById('signupName').value.trim();
       const cc = document.getElementById('signupCountry').value;
       const rawPhone = document.getElementById('signupPhone').value.trim();
@@ -435,24 +814,40 @@
       const err = document.getElementById('signupError');
 
       const phoneObj = normalizePhone(cc, rawPhone);
-      if (!name || name.length < 2) { err.textContent = "Enter your full name."; return; }
+      if (!name || name.length < 2) { err.textContent = "Please enter your name."; return; }
       if (!phoneObj) { err.textContent = "Enter a valid mobile number (e.g. 01712345678)."; return; }
       if (pass.length < 6) { err.textContent = "Password must be at least 6 characters."; return; }
-      if (!agreed) { err.textContent = "Please accept Terms & Anti-Fraud Policy."; return; }
+      if (!agreed) { err.textContent = "Please accept Terms of Service & Privacy Policy."; return; }
 
-      err.style.color = "#07C160";
-      err.textContent = "Registering verified user...";
+      draftSignup = { name, phoneObj, pass };
+      hideAuthModals();
+      document.getElementById('humanCheck').checked = false;
+      document.getElementById('verifyError').textContent = '';
+      document.getElementById('wcVerifyModal').style.display = 'flex';
+    }
+
+    async function completeSignup() {
+      const vErr = document.getElementById('verifyError');
+      if (!document.getElementById('humanCheck').checked) {
+        vErr.textContent = "Please check 'I am a human'.";
+        return;
+      }
+      if (!draftSignup) { openSignup(); return; }
+
+      vErr.style.color = "var(--wc-green)";
+      vErr.textContent = "Creating account...";
 
       try {
-        const cred = await auth.createUserWithEmailAndPassword(phoneObj.authId, pass);
+        const cred = await auth.createUserWithEmailAndPassword(draftSignup.phoneObj.authId, draftSignup.pass);
         if (cred.user) {
-          await cred.user.updateProfile({ displayName: name });
-          await ensureUserDirectoryDoc(cred.user, name, phoneObj);
+          await cred.user.updateProfile({ displayName: draftSignup.name });
+          await syncUserProfile(cred.user, draftSignup.name, draftSignup.phoneObj);
         }
-        document.getElementById('scSignupModal').style.display = 'none';
+        draftSignup = null;
+        closeSplashOnly();
       } catch (e) {
-        err.style.color = "#ff4d4f";
-        err.textContent = e.message;
+        vErr.style.color = "var(--wc-danger)";
+        vErr.textContent = e.message;
       }
     }
 
@@ -464,442 +859,41 @@
 
       const phoneObj = normalizePhone(cc, rawPhone);
       if (!phoneObj || !pass) {
-        err.style.color = "#ff4d4f";
         err.textContent = "Enter valid mobile number and password.";
         return;
       }
 
-      err.style.color = "#07C160";
-      err.textContent = "Signing in...";
+      err.style.color = "var(--wc-green)";
+      err.textContent = "Logging in...";
 
       try {
         await auth.signInWithEmailAndPassword(phoneObj.authId, pass);
-        document.getElementById('scLoginModal').style.display = 'none';
+        closeSplashOnly();
       } catch (e) {
-        err.style.color = "#ff4d4f";
+        err.style.color = "var(--wc-danger)";
         err.textContent = e.message;
       }
     }
 
     function handleLogout() {
-      closeChat();
-      if (unsubscribeIncoming) unsubscribeIncoming();
-      if (unsubscribeOutgoing) unsubscribeOutgoing();
+      closeWcChat();
+      if (unsubIn) unsubIn();
+      if (unsubOut) unsubOut();
       auth.signOut();
     }
 
-    function switchTab(id, title, btn) {
-      document.querySelectorAll('.sc-tab-page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.sc-nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      if (btn) btn.classList.add('active');
-      document.querySelector('.sc-header-title span').textContent = title;
-    }
+    async function syncUserProfile(user, explicitName, explicitPhoneObj) {
+      const digits = explicitPhoneObj ? explicitPhoneObj.digits : ((user.email || '').split('@')[0] || '');
+      const display = explicitPhoneObj ? explicitPhoneObj.display : ('+' + digits);
+      const name = explicitName || user.displayName || display;
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById('scSplash').style.display = 'none';
-        document.getElementById('scLoginModal').style.display = 'none';
-        document.getElementById('scSignupModal').style.display = 'none';
-
-        await ensureUserDirectoryDoc(user, user.displayName, null);
-        listenFriendRequests();
-        renderMfsAccounts();
-        renderCrespoWallet();
-        renderPaymentHistory();
-      } else {
-        currentUser = null;
-        currentProfile = null;
-        acceptedFriends = [];
-        document.getElementById('scSplash').style.display = 'flex';
-      }
-    });
-
-    /* VERIFIED DIRECTORY + FRIEND REQUEST FLOW */
-    async function sendFriendRequest() {
-      if (!currentUser || !currentProfile) return;
-      const rawPhone = document.getElementById('requestPhoneInput').value.trim();
-      const feedback = document.getElementById('requestFeedback');
-      const phoneObj = normalizePhone('+880', rawPhone);
-
-      if (!phoneObj) {
-        feedback.style.color = "#ff4d4f";
-        feedback.textContent = "সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।";
-        return;
-      }
-
-      if (phoneObj.digits === currentProfile.phoneDigits) {
-        feedback.style.color = "#ff4d4f";
-        feedback.textContent = "নিজের নম্বরে ফ্রেন্ড রিকোয়েস্ট পাঠানো যাবে না।";
-        return;
-      }
-
-      feedback.style.color = "#07C160";
-      feedback.textContent = "রেজিস্টার্ড ইউজার যাচাই করা হচ্ছে...";
-
-      try {
-        const snap = await db.collection('users')
-          .where('phoneDigits', '==', phoneObj.digits)
-          .limit(1)
-          .get();
-
-        if (snap.empty) {
-          feedback.style.color = "#ff4d4f";
-          feedback.textContent = "এই নম্বরে কোনো ভেরিফাইড SuperChat অ্যাকাউন্ট পাওয়া যায়নি।";
-          return;
-        }
-
-        const targetDoc = snap.docs[0].data();
-        const reqId = [currentUser.uid, targetDoc.uid].sort().join('_');
-
-        await db.collection('friend_requests').doc(reqId).set({
-          reqId: reqId,
-          fromUid: currentUser.uid,
-          fromName: currentProfile.name,
-          fromPhone: currentProfile.phoneDisplay,
-          toUid: targetDoc.uid,
-          toName: targetDoc.name,
-          toPhone: targetDoc.phoneDisplay,
-          participants: [currentUser.uid, targetDoc.uid],
-          status: 'pending',
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-
-        document.getElementById('requestPhoneInput').value = '';
-        feedback.style.color = "#07C160";
-        feedback.textContent = `${targetDoc.name} (${targetDoc.phoneDisplay})-এর কাছে Friend Request পাঠানো হয়েছে।`;
-      } catch (err) {
-        feedback.style.color = "#ff4d4f";
-        feedback.textContent = "Request error: " + err.message;
-      }
-    }
-
-    function listenFriendRequests() {
-      if (!currentUser) return;
-      if (unsubscribeIncoming) unsubscribeIncoming();
-      if (unsubscribeOutgoing) unsubscribeOutgoing();
-
-      const incomingMap = new Map();
-      const outgoingMap = new Map();
-
-      function rebuildLists() {
-        const incomingEl = document.getElementById('incomingRequestsList');
-        const outgoingEl = document.getElementById('outgoingRequestsList');
-        const friendsEl = document.getElementById('acceptedFriendsList');
-        const chatListEl = document.getElementById('acceptedChatList');
-
-        const pendingIn = Array.from(incomingMap.values()).filter(r => r.status === 'pending');
-        const pendingOut = Array.from(outgoingMap.values()).filter(r => r.status === 'pending');
-
-        const mergedAccepted = new Map();
-        Array.from(incomingMap.values()).concat(Array.from(outgoingMap.values())).forEach(r => {
-          if (r.status === 'accepted') {
-            const isFromMe = r.fromUid === currentUser.uid;
-            const peerUid = isFromMe ? r.toUid : r.fromUid;
-            const peerName = isFromMe ? r.toName : r.fromName;
-            const peerPhone = isFromMe ? r.toPhone : r.fromPhone;
-            const roomId = [currentUser.uid, peerUid].sort().join('_');
-            mergedAccepted.set(peerUid, { peerUid, peerName, peerPhone, roomId });
-          }
-        });
-
-        acceptedFriends = Array.from(mergedAccepted.values());
-
-        incomingEl.innerHTML = pendingIn.length === 0
-          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`
-          : pendingIn.map(r => `
-            <div class="sc-card static-card">
-              <div class="sc-avatar av-blue">📩</div>
-              <div style="flex:1;">
-                <h4 style="margin:0 0 3px;">${r.fromName}</h4>
-                <p style="margin:0; font-size:12px; color:#07C160;">${r.fromPhone}</p>
-              </div>
-              <button type="button" class="sc-btn-green" style="width:auto; padding:7px 10px; font-size:12px;" onclick="respondRequest('${r.reqId}', 'accepted')">Accept</button>
-              <button type="button" class="sc-btn-danger" onclick="respondRequest('${r.reqId}', 'rejected')">Reject</button>
-            </div>
-          `).join('');
-
-        outgoingEl.innerHTML = pendingOut.length === 0
-          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো পাঠানো পেন্ডিং রিকোয়েস্ট নেই।</p>`
-          : pendingOut.map(r => `
-            <div class="sc-card static-card">
-              <div class="sc-avatar av-orange">⏳</div>
-              <div style="flex:1;">
-                <h4 style="margin:0 0 3px;">${r.toName}</h4>
-                <p style="margin:0; font-size:12px; color:#9aa4b2;">${r.toPhone} • Pending</p>
-              </div>
-            </div>
-          `).join('');
-
-        friendsEl.innerHTML = acceptedFriends.length === 0
-          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">এখনো কোনো ফ্রেন্ড যুক্ত হয়নি।</p>`
-          : acceptedFriends.map(f => `
-            <div class="sc-card static-card">
-              <div class="sc-avatar av-green">📞</div>
-              <div style="flex:1;">
-                <h4 style="margin:0 0 3px;">${f.peerName}</h4>
-                <p style="margin:0; font-size:12px; color:#07C160;">${f.peerPhone}</p>
-              </div>
-              <button type="button" class="sc-btn-green" style="width:auto; padding:7px 12px; font-size:12px;" onclick="openChat('${f.roomId}', '${f.peerName}')">Chat</button>
-            </div>
-          `).join('');
-
-        chatListEl.innerHTML = acceptedFriends.length === 0
-          ? `<div class="sc-box"><p style="margin:0; font-size:12px; color:#8c96a6;">Contacts ট্যাব থেকে Friend Request পাঠিয়ে Accept হলে প্রাইভেট চ্যাট এখানে দেখাবে।</p></div>`
-          : acceptedFriends.map(f => `
-            <div class="sc-card" onclick="openChat('${f.roomId}', '${f.peerName}')">
-              <div class="sc-avatar av-blue">👤</div>
-              <div style="flex:1;">
-                <h4 style="margin:0 0 3px;">${f.peerName}</h4>
-                <p style="margin:0; font-size:12px; color:#07C160;">${f.peerPhone} • Verified Friend</p>
-              </div>
-            </div>
-          `).join('');
-      }
-
-      unsubscribeIncoming = db.collection('friend_requests')
-        .where('toUid', '==', currentUser.uid)
-        .onSnapshot(snap => {
-          incomingMap.clear();
-          snap.forEach(doc => incomingMap.set(doc.id, doc.data()));
-          rebuildLists();
-        });
-
-      unsubscribeOutgoing = db.collection('friend_requests')
-        .where('fromUid', '==', currentUser.uid)
-        .onSnapshot(snap => {
-          outgoingMap.clear();
-          snap.forEach(doc => outgoingMap.set(doc.id, doc.data()));
-          rebuildLists();
-        });
-    }
-
-    async function respondRequest(reqId, status) {
-      try {
-        await db.collection('friend_requests').doc(reqId).update({
-          status: status,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (err) {
-        alert("Action error: " + err.message);
-      }
-    }
-
-    function isAllowedChatRoom(roomId) {
-      if (roomId === 'global_chat') return true;
-      return acceptedFriends.some(f => f.roomId === roomId);
-    }
-
-    function openChat(roomId, title) {
-      if (!currentUser) return;
-      if (!isAllowedChatRoom(roomId)) {
-        alert("এই ইউজারের সাথে এখনো Accepted Friend সম্পর্ক তৈরি হয়নি।");
-        return;
-      }
-
-      currentRoomId = roomId;
-      document.getElementById('chatPartnerName').textContent = title;
-      document.getElementById('chatRoom').classList.add('open');
-
-      const msgBox = document.getElementById('chatMessages');
-      msgBox.innerHTML = '';
-
-      if (unsubscribeChat) unsubscribeChat();
-
-      const collectionPath = roomId === 'global_chat'
-        ? 'global_chat'
-        : `private_chats/${roomId}/messages`;
-
-      unsubscribeChat = db.collection(collectionPath)
-        .orderBy('createdAt', 'asc')
-        .limit(100)
-        .onSnapshot(snapshot => {
-          msgBox.innerHTML = '';
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const isMe = data.senderUid === currentUser.uid;
-            const div = document.createElement('div');
-            div.className = 'sc-msg ' + (isMe ? 'me' : 'other');
-
-            const senderTag = document.createElement('div');
-            senderTag.className = 'sc-msg-sender';
-            senderTag.textContent = isMe ? 'আপনি' : (data.senderName || 'User');
-
-            const textNode = document.createElement('div');
-            textNode.textContent = data.text || '';
-
-            div.appendChild(senderTag);
-            div.appendChild(textNode);
-            msgBox.appendChild(div);
-          });
-          msgBox.scrollTop = msgBox.scrollHeight;
-        });
-    }
-
-    function closeChat() {
-      document.getElementById('chatRoom').classList.remove('open');
-      currentRoomId = null;
-      if (unsubscribeChat) {
-        unsubscribeChat();
-        unsubscribeChat = null;
-      }
-    }
-
-    async function handleSend() {
-      if (!currentUser || !currentRoomId || !isAllowedChatRoom(currentRoomId)) return;
-      const input = document.getElementById('messageInput');
-      const text = input.value.trim();
-      if (!text) return;
-
-      const collectionPath = currentRoomId === 'global_chat'
-        ? 'global_chat'
-        : `private_chats/${currentRoomId}/messages`;
-
-      try {
-        await db.collection(collectionPath).add({
-          text: text,
-          senderUid: currentUser.uid,
-          senderName: (currentProfile && currentProfile.name) || 'User',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        input.value = '';
-      } catch (err) {
-        alert('Message send error: ' + err.message);
-      }
-    }
-
-    /* bKash, NAGAD, ROCKET & CRESPO WALLET */
-    function saveMfsAccount() {
-      if (!currentUser) return;
-      const provider = document.getElementById('mfsProviderSelect').value;
-      const rawNum = document.getElementById('mfsNumberInput').value.trim();
-      const accType = document.getElementById('mfsTypeSelect').value;
-      const phoneObj = normalizePhone('+880', rawNum);
-
-      if (!phoneObj) {
-        alert("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।");
-        return;
-      }
-
-      const key = 'sc_mfs_v3_' + currentUser.uid;
-      const list = JSON.parse(localStorage.getItem(key) || '[]').filter(x => x.provider !== provider);
-      list.unshift({ provider, number: phoneObj.display, accType });
-      localStorage.setItem(key, JSON.stringify(list));
-      document.getElementById('mfsNumberInput').value = '';
-      renderMfsAccounts();
-    }
-
-    function renderMfsAccounts() {
-      if (!currentUser) return;
-      const list = JSON.parse(localStorage.getItem('sc_mfs_v3_' + currentUser.uid) || '[]');
-      const wrap = document.getElementById('mfsAccountsList');
-      if (list.length === 0) {
-        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো bKash, Nagad বা Rocket নম্বর যুক্ত করা হয়নি।</p>`;
-        return;
-      }
-      wrap.innerHTML = list.map(acc => `
-        <div class="sc-card static-card">
-          <div class="sc-avatar av-pink">💳</div>
-          <div style="flex:1;">
-            <h4 style="margin:0 0 3px;">${acc.provider} (${acc.accType})</h4>
-            <p style="margin:0; font-size:12px; color:#07C160;">${acc.number}</p>
-          </div>
-          <button type="button" class="sc-btn-outline" onclick="copyText('${acc.number}')">Copy</button>
-        </div>
-      `).join('');
-    }
-
-    function saveCrespoWallet() {
-      if (!currentUser) return;
-      const address = document.getElementById('crespoAddressInput').value.trim();
-      const balance = document.getElementById('crespoBalanceInput').value.trim() || '0.00 CRSP';
-      if (!address || address.length < 4) {
-        alert("সঠিক Crespo Wallet Address বা ID দিন।");
-        return;
-      }
-      localStorage.setItem('sc_crespo_v3_' + currentUser.uid, JSON.stringify({ address, balance }));
-      renderCrespoWallet();
-    }
-
-    function renderCrespoWallet() {
-      if (!currentUser) return;
-      const raw = localStorage.getItem('sc_crespo_v3_' + currentUser.uid);
-      const wrap = document.getElementById('crespoWalletCard');
-      if (!raw) {
-        wrap.innerHTML = '';
-        return;
-      }
-      const w = JSON.parse(raw);
-      document.getElementById('crespoAddressInput').value = w.address;
-      document.getElementById('crespoBalanceInput').value = w.balance;
-      wrap.innerHTML = `
-        <div class="sc-card static-card" style="margin-bottom:0;">
-          <div class="sc-avatar av-orange">🪙</div>
-          <div style="flex:1; min-width:0;">
-            <h4 style="margin:0 0 3px;">${w.balance}</h4>
-            <p style="margin:0; font-size:12px; color:#9aa4b2; word-break:break-all;">${w.address}</p>
-          </div>
-          <button type="button" class="sc-btn-outline" onclick="copyText('${w.address}')">Copy</button>
-        </div>
-      `;
-    }
-
-    function initiatePayment() {
-      if (!currentUser) return;
-      const channel = document.getElementById('payChannelSelect').value;
-      const receiver = document.getElementById('payReceiverInput').value.trim();
-      const amount = document.getElementById('payAmountInput').value.trim();
-      const refId = document.getElementById('payTrxRefInput').value.trim() || ('TX-' + Date.now());
-
-      if (!receiver || !amount || Number(amount) <= 0) {
-        alert("Receiver এবং সঠিক Amount দিন।");
-        return;
-      }
-
-      const key = 'sc_tx_v3_' + currentUser.uid;
-      const list = JSON.parse(localStorage.getItem(key) || '[]');
-      list.unshift({
-        channel,
-        receiver,
-        amount,
-        refId,
-        time: new Date().toLocaleString()
-      });
-      localStorage.setItem(key, JSON.stringify(list));
-
-      document.getElementById('payReceiverInput').value = '';
-      document.getElementById('payAmountInput').value = '';
-      document.getElementById('payTrxRefInput').value = '';
-      renderPaymentHistory();
-    }
-
-    function renderPaymentHistory() {
-      if (!currentUser) return;
-      const list = JSON.parse(localStorage.getItem('sc_tx_v3_' + currentUser.uid) || '[]');
-      const wrap = document.getElementById('paymentHistoryList');
-      if (list.length === 0) {
-        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো লেনদেন রেকর্ড নেই।</p>`;
-        return;
-      }
-      wrap.innerHTML = list.slice(0, 12).map(item => `
-        <div class="sc-card static-card">
-          <div class="sc-avatar av-green">💸</div>
-          <div style="flex:1;">
-            <h4 style="margin:0 0 3px;">${item.channel} • ${item.amount}</h4>
-            <p style="margin:0; font-size:12px; color:#9aa4b2;">To: ${item.receiver} | Ref: ${item.refId}</p>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function copyText(val) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(val).then(() => alert("Copied: " + val));
-      } else {
-        alert(val);
-      }
-    }
-  </script>
-</body>
-</html>
+      const data = {
+        uid: user.uid,
+        name,
+        phoneDigits: digits,
+        phoneDisplay: display,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await db.collection('users').doc(user.uid).set(data, { merge: true });
+      currentProfile = data;
+      document.getElementById('meName').textContent = name
