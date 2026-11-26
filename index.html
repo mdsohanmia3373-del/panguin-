@@ -6,10 +6,10 @@
   <title>SuperChat</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css?v=99">
-  <!-- Direct Reliable Firebase SDK -->
-  <script src="https://gstatic.com"></script>
-  <script src="https://gstatic.com"></script>
-  <script src="https://gstatic.com"></script>
+  <!-- Direct Reliable Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 </head>
 <body oncontextmenu="return false;">
 
@@ -66,7 +66,10 @@
     <div id="chats" class="tab-page active">
       <div class="card" onclick="openChat('global_chat', 'Global Encrypted Room')">
         <div class="avatar av-green">💬</div>
-        <div><h4>Global Encrypted Room</h4><p id="last-msg-preview" style="font-size:13px; color:#07C160;">Tap to enter encrypted chat...</p></div>
+        <div>
+          <h4>Global Encrypted Room</h4>
+          <p id="last-msg-preview" style="font-size:13px; color:#07C160;">Tap to enter encrypted chat...</p>
+        </div>
       </div>
       <div id="privateChatList"></div>
     </div>
@@ -92,16 +95,19 @@
     <div id="me" class="tab-page">
       <div class="card">
         <div class="avatar av-orange">💳</div>
-        <div><h4 id="userEmailDisplay">User Profile</h4><p style="font-size:13px; color:#07C160;">Zero-Trust Wallet & Account Active</p></div>
+        <div>
+          <h4 id="userEmailDisplay">User Profile</h4>
+          <p style="font-size:13px; color:#07C160;">Zero-Trust Wallet & Account Active</p>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('chats', 'SuperChat', this)">💬<br>Chats</button>
-    <button class="nav-btn" onclick="switchTab('contacts', 'Contacts', this)">📒<br>Contacts</button>
-    <button class="nav-btn" onclick="switchTab('discover', 'Discover', this)">🧭<br>Discover</button>
-    <button class="nav-btn" onclick="switchTab('me', 'Me', this)">👤<br>Me</button>
+    <button type="button" class="nav-btn active" onclick="switchTab('chats', 'SuperChat', this)">💬<br>Chats</button>
+    <button type="button" class="nav-btn" onclick="switchTab('contacts', 'Contacts', this)">📒<br>Contacts</button>
+    <button type="button" class="nav-btn" onclick="switchTab('discover', 'Discover', this)">🧭<br>Discover</button>
+    <button type="button" class="nav-btn" onclick="switchTab('me', 'Me', this)">👤<br>Me</button>
   </div>
 
   <!-- Chat Room -->
@@ -124,7 +130,7 @@
 
     const firebaseConfig = {
       apiKey: "AIzaSyCHYNtlZWcz87KD3a29byrDkBM2dQTDjWE",
-      authDomain: "://firebaseapp.com",
+      authDomain: "superchat-bd-48a39.firebaseapp.com",
       projectId: "superchat-bd-48a39",
       storageBucket: "superchat-bd-48a39.firebasestorage.app",
       messagingSenderId: "539120964827",
@@ -134,25 +140,32 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+
     let currentUser = null;
     let currentRoomId = "global_chat";
     let unsubscribeChat = null;
 
-    function showAuth(m) {
+    function showAuth(mode) {
       document.getElementById('authError').textContent = '';
       document.getElementById('authScreen').style.display = 'flex';
-      document.getElementById('authTitle').textContent = m === 'login' ? 'Log In' : 'Sign Up';
+      document.getElementById('authTitle').textContent = mode === 'login' ? 'Log In' : 'Sign Up';
     }
 
     function switchTab(id, title, btn) {
       document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       document.querySelector('.header-title span').textContent = title;
     }
 
-    function closeChat() { document.getElementById('chatRoom').classList.remove('open'); }
+    function closeChat() {
+      document.getElementById('chatRoom').classList.remove('open');
+      if (unsubscribeChat) {
+        unsubscribeChat();
+        unsubscribeChat = null;
+      }
+    }
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -172,47 +185,191 @@
       const email = document.getElementById('authEmail').value.trim();
       const pass = document.getElementById('authPass').value;
       const err = document.getElementById('authError');
-      if (!email || pass.length < 6) { err.style.color = "red"; err.textContent = "Enter valid email & min 6-character password!"; return; }
-      err.style.color = "#07C160"; err.textContent = "Creating account...";
+
+      if (!email || pass.length < 6) {
+        err.style.color = "red";
+        err.textContent = "Enter a valid email and password (min 6 chars)!";
+        return;
+      }
+
+      err.style.color = "#07C160";
+      err.textContent = "Creating account...";
+
       auth.createUserWithEmailAndPassword(email, pass)
-        .catch(e => { err.style.color = "red"; err.textContent = e.message; });
+        .then(() => {
+          err.textContent = "";
+        })
+        .catch(e => {
+          err.style.color = "red";
+          err.textContent = e.message;
+        });
     }
 
     function handleLogin() {
       const email = document.getElementById('authEmail').value.trim();
       const pass = document.getElementById('authPass').value;
       const err = document.getElementById('authError');
-      if (!email || !pass) { err.style.color = "red"; err.textContent = "Enter email and password!"; return; }
-      err.style.color = "#07C160"; err.textContent = "Logging in...";
+
+      if (!email || !pass) {
+        err.style.color = "red";
+        err.textContent = "Enter email and password!";
+        return;
+      }
+
+      err.style.color = "#07C160";
+      err.textContent = "Logging in...";
+
       auth.signInWithEmailAndPassword(email, pass)
-        .catch(e => { err.style.color = "red"; err.textContent = e.message; });
+        .then(() => {
+          err.textContent = "";
+        })
+        .catch(e => {
+          err.style.color = "red";
+          err.textContent = e.message;
+        });
     }
 
-    function handleLogout() { auth.signOut(); }
+    function handleLogout() {
+      auth.signOut();
+    }
 
     function handleAddFriend() {
+      if (!currentUser) return;
       const fEmail = document.getElementById('friendEmailInput').value.trim().toLowerCase();
       if (!fEmail || !fEmail.includes('@') || fEmail === currentUser.email.toLowerCase()) {
-        alert("Enter a valid friend's email!"); return;
+        alert("Enter a valid friend's email!");
+        return;
       }
+
       let friends = JSON.parse(localStorage.getItem('sc_friends_' + currentUser.uid) || '[]');
       if (!friends.includes(fEmail)) {
         friends.push(fEmail);
         localStorage.setItem('sc_friends_' + currentUser.uid, JSON.stringify(friends));
       }
+
       document.getElementById('friendEmailInput').value = '';
       renderFriends();
       alert("Friend added! Tap on their name to start private chat.");
     }
 
     function renderFriends() {
+      if (!currentUser) return;
       const friends = JSON.parse(localStorage.getItem('sc_friends_' + currentUser.uid) || '[]');
       const fList = document.getElementById('friendsList');
       const pList = document.getElementById('privateChatList');
-      fList.innerHTML = ''; pList.innerHTML = '';
+      fList.innerHTML = '';
+      pList.innerHTML = '';
 
       friends.forEach(email => {
         const roomId = [currentUser.email.toLowerCase(), email].sort().join('_').replace(/[^a-zA-Z0-9]/g, '');
         const name = email.split('@')[0];
         const cardHTML = `<div class="avatar av-blue">👤</div><div><h4>${name}</h4><p style="font-size:12px; color:#07C160;">${email}</p></div>`;
-        
+
+        const friendCard = document.createElement('div');
+        friendCard.className = 'card';
+        friendCard.innerHTML = cardHTML;
+        friendCard.onclick = () => openChat(roomId, name);
+        fList.appendChild(friendCard);
+
+        const chatCard = document.createElement('div');
+        chatCard.className = 'card';
+        chatCard.innerHTML = cardHTML;
+        chatCard.onclick = () => openChat(roomId, name);
+        pList.appendChild(chatCard);
+      });
+    }
+
+    function openChat(roomId, title) {
+      if (!currentUser) return;
+      currentRoomId = roomId;
+      document.getElementById('chatPartnerName').textContent = title;
+      document.getElementById('chatRoom').classList.add('open');
+
+      const msgBox = document.getElementById('chatMessages');
+      msgBox.innerHTML = '';
+
+      if (unsubscribeChat) {
+        unsubscribeChat();
+      }
+
+      const collectionPath = roomId === 'global_chat'
+        ? 'global_chat'
+        : `private_chats/${roomId}/messages`;
+
+      unsubscribeChat = db.collection(collectionPath)
+        .orderBy('createdAt', 'asc')
+        .limit(100)
+        .onSnapshot((snapshot) => {
+          msgBox.innerHTML = '';
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            const isMe = data.senderUid === currentUser.uid;
+            const div = document.createElement('div');
+            div.className = 'msg ' + (isMe ? 'me' : 'other');
+
+            const senderTag = document.createElement('div');
+            senderTag.className = 'msg-sender';
+            senderTag.textContent = isMe ? 'আপনি' : (data.senderEmail || 'User');
+
+            const textNode = document.createElement('div');
+            textNode.textContent = data.text || '';
+
+            div.appendChild(senderTag);
+            div.appendChild(textNode);
+            msgBox.appendChild(div);
+          });
+          msgBox.scrollTop = msgBox.scrollHeight;
+        });
+    }
+
+    async function handleSend() {
+      if (!currentUser) return;
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const collectionPath = currentRoomId === 'global_chat'
+        ? 'global_chat'
+        : `private_chats/${currentRoomId}/messages`;
+
+      try {
+        await db.collection(collectionPath).add({
+          text: text,
+          senderUid: currentUser.uid,
+          senderEmail: currentUser.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        input.value = '';
+      } catch (err) {
+        alert('Message send error: ' + err.message);
+      }
+    }
+
+    function handlePostVideo() {
+      if (!currentUser) return;
+      const urlInput = document.getElementById('videoUrlInput');
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      const key = 'sc_videos_' + currentUser.uid;
+      const videos = JSON.parse(localStorage.getItem(key) || '[]');
+      videos.unshift({ url, time: Date.now() });
+      localStorage.setItem(key, JSON.stringify(videos));
+      urlInput.value = '';
+      loadVideos();
+    }
+
+    function loadVideos() {
+      if (!currentUser) return;
+      const list = document.getElementById('videoFeedList');
+      if (!list) return;
+      const videos = JSON.parse(localStorage.getItem('sc_videos_' + currentUser.uid) || '[]');
+      list.innerHTML = videos.map(v => `
+        <div class="card">
+          <div><h4>Shared Video</h4><p style="font-size:12px; word-break:break-all;">${v.url}</p></div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
