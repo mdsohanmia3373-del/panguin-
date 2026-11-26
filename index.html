@@ -16,10 +16,8 @@
       font-family: Arial, sans-serif;
       background: #101215;
       color: #fff;
-      padding-bottom: 72px;
+      padding-bottom: 74px;
     }
-
-    /* Header & Tabs */
     .sc-header {
       position: sticky; top: 0; z-index: 20;
       background: #171a1f; border-bottom: 1px solid #262b33;
@@ -30,11 +28,9 @@
       background: #242932; color: #ff6b6b; border: 1px solid #343b47;
       padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
     }
-
     .sc-content { padding: 14px; }
     .sc-tab-page { display: none; }
     .sc-tab-page.active { display: block; }
-
     .sc-card {
       background: #181b20; border: 1px solid #262b33; border-radius: 10px;
       padding: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
@@ -44,13 +40,12 @@
     .sc-avatar {
       width: 44px; height: 44px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 700; flex-shrink: 0;
+      font-size: 19px; font-weight: 700; flex-shrink: 0;
     }
     .av-green { background: rgba(7, 193, 96, 0.16); color: #07C160; }
     .av-blue { background: rgba(77, 163, 255, 0.16); color: #4da3ff; }
     .av-orange { background: rgba(255, 159, 67, 0.16); color: #ff9f43; }
     .av-pink { background: rgba(232, 67, 147, 0.18); color: #ff6bb5; }
-
     .sc-box {
       background: #181b20; border: 1px solid #262b33; border-radius: 10px;
       padding: 14px; margin-bottom: 14px;
@@ -70,7 +65,10 @@
       padding: 7px 10px; border-radius: 6px; border: 1px solid #2e3542;
       background: #20252e; color: #dce3ec; font-size: 12px; font-weight: 600; cursor: pointer;
     }
-
+    .sc-btn-danger {
+      padding: 7px 10px; border-radius: 6px; border: 1px solid #59262b;
+      background: rgba(255, 77, 79, 0.14); color: #ff7875; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
     .sc-bottom-nav {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
       background: #171a1f; border-top: 1px solid #262b33;
@@ -81,8 +79,6 @@
       font-size: 11px; font-weight: 600; padding: 4px 2px; cursor: pointer; line-height: 1.35;
     }
     .sc-nav-btn.active { color: #07C160; }
-
-    /* Chat Room */
     .sc-chat-room {
       position: fixed; inset: 0; z-index: 60;
       background: #101215; display: none; flex-direction: column;
@@ -109,8 +105,6 @@
       padding: 0 16px; border: none; border-radius: 8px;
       background: #07C160; color: #fff; font-weight: 700; cursor: pointer;
     }
-
-    /* Auth Splash & Modals */
     .sc-splash {
       position: fixed; inset: 0; z-index: 999;
       background: radial-gradient(circle at 50% 35%, #1d2b3a 0%, #0b0d10 70%);
@@ -133,6 +127,7 @@
     .sc-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .sc-close-btn { background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; }
     .sc-error { color: #ff4d4f; font-size: 13px; min-height: 18px; margin-top: 8px; font-weight: 600; }
+    .sc-status { color: #07C160; font-size: 12px; margin-top: 6px; min-height: 16px; }
     .sc-badge {
       display: inline-block; padding: 3px 8px; border-radius: 999px;
       font-size: 11px; font-weight: 700; background: rgba(7, 193, 96, 0.16); color: #07C160;
@@ -141,11 +136,11 @@
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- 1. Dark Welcome Screen -->
+  <!-- Welcome Screen -->
   <div id="scSplash" class="sc-splash">
     <div class="sc-brand">
       <h1>SuperChat</h1>
-      <p>Private Chat, Contacts &amp; Wallet Hub</p>
+      <p>Verified Chat, Contacts &amp; MFS Hub</p>
     </div>
     <div class="sc-btn-stack">
       <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="openLoginModal()">Log In</button>
@@ -153,7 +148,7 @@
     </div>
   </div>
 
-  <!-- 2. Log In Screen -->
+  <!-- Log In Modal -->
   <div id="scLoginModal" class="sc-modal">
     <div class="sc-top-bar">
       <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
@@ -176,14 +171,14 @@
     </div>
   </div>
 
-  <!-- 3. Sign Up Screen -->
+  <!-- Sign Up Modal -->
   <div id="scSignupModal" class="sc-modal">
     <div class="sc-top-bar">
       <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
-      <span style="font-size:13px; color:#9aa4b2;">Create Account</span>
+      <span style="font-size:13px; color:#9aa4b2;">Verified Registration</span>
     </div>
     <h2 style="margin:0 0 18px; text-align:center;">Sign Up Via Phone Number</h2>
-    <input type="text" id="signupName" class="sc-input" placeholder="Your Name / Alias">
+    <input type="text" id="signupName" class="sc-input" placeholder="Your Full Name">
     <select id="signupCountry" class="sc-select">
       <option value="+880" selected>Bangladesh (+880)</option>
       <option value="+91">India (+91)</option>
@@ -196,107 +191,111 @@
     <input type="password" id="signupPass" class="sc-input" placeholder="Set password (min 6 chars)">
     <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#b8c0cc; margin-top:6px;">
       <input type="checkbox" id="signupAgree">
-      <span>I accept SuperChat Terms &amp; Privacy Policy</span>
+      <span>I accept SuperChat Terms &amp; Anti-Fraud Policy</span>
     </label>
     <div id="signupError" class="sc-error"></div>
     <div style="margin-top:auto;">
-      <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="handleRegister()">Accept and Continue</button>
+      <button type="button" class="sc-btn-green" style="padding:14px; font-size:16px;" onclick="handleRegister()">Create Verified Account</button>
     </div>
   </div>
 
-  <!-- Main Header -->
+  <!-- Header -->
   <div class="sc-header">
     <div class="sc-header-title"><span>SuperChat</span></div>
     <button type="button" class="sc-logout-btn" onclick="handleLogout()">Log Out</button>
   </div>
 
-  <!-- Tab Contents -->
+  <!-- Content -->
   <div class="sc-content">
-    <!-- CHATS TAB: Only Global Room + Added Friends -->
+    <!-- CHATS TAB -->
     <div id="chats" class="sc-tab-page active">
-      <div class="sc-card" onclick="openChat('global_chat', 'Global Encrypted Room')">
+      <div class="sc-card" onclick="openChat('global_chat', 'Global Verified Room')">
         <div class="sc-avatar av-green">💬</div>
         <div style="flex:1;">
-          <h4 style="margin:0 0 4px;">Global Encrypted Room</h4>
-          <p style="margin:0; font-size:12px; color:#07C160;">Open community room</p>
+          <h4 style="margin:0 0 4px;">Global Verified Room</h4>
+          <p style="margin:0; font-size:12px; color:#07C160;">Registered users room</p>
         </div>
       </div>
       <div class="sc-box" style="padding:10px 12px;">
         <div style="font-size:12px; color:#9aa4b2;">
-          Private chat only works with people you add in <b>Contacts</b>.
+          Random or unverified numbers cannot start private chats. Only <b>Accepted Friends</b> appear below.
         </div>
       </div>
-      <div id="privateChatList"></div>
+      <div id="acceptedChatList"></div>
     </div>
 
-    <!-- CONTACTS TAB: Add Friend + Show Contact Numbers -->
+    <!-- CONTACTS & FRIEND REQUESTS TAB -->
     <div id="contacts" class="sc-tab-page">
       <div class="sc-box">
-        <h4>Add Friend &amp; Save Contact Number</h4>
-        <input type="text" id="friendNameInput" class="sc-input" placeholder="Friend's name (optional)">
-        <input type="tel" id="friendPhoneInput" class="sc-input" placeholder="Friend's mobile number (e.g. 01712345678)">
-        <button type="button" class="sc-btn-green" onclick="handleAddFriend()">Add Friend</button>
+        <h4>Send Friend Request (Registered Numbers Only)</h4>
+        <input type="tel" id="requestPhoneInput" class="sc-input" placeholder="Enter registered mobile number (e.g. 01712345678)">
+        <button type="button" class="sc-btn-green" onclick="sendFriendRequest()">Verify &amp; Send Request</button>
+        <div id="requestFeedback" class="sc-status"></div>
       </div>
 
       <div class="sc-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <h4 style="margin:0;">My Contact List</h4>
-          <button type="button" class="sc-btn-outline" onclick="importDeviceContacts()">Sync Contact</button>
-        </div>
-        <p style="margin:0 0 10px; font-size:12px; color:#9aa4b2;">
-          Saved contact numbers are shown below. Tap a friend to start private chat.
-        </p>
-        <div id="friendsList"></div>
+        <h4>Incoming Friend Requests</h4>
+        <div id="incomingRequestsList"></div>
+      </div>
+
+      <div class="sc-box">
+        <h4>Sent Requests</h4>
+        <div id="outgoingRequestsList"></div>
+      </div>
+
+      <div class="sc-box">
+        <h4>Accepted Friends &amp; Contact Numbers</h4>
+        <div id="acceptedFriendsList"></div>
       </div>
     </div>
 
-    <!-- WALLET TAB: Crespo Wallet + bKash + Nagad -->
+    <!-- WALLET TAB: bKash, Nagad, Rocket & Crespo Wallet -->
     <div id="wallet" class="sc-tab-page">
-      <!-- Crespo Wallet Section -->
       <div class="sc-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <h4 style="margin:0;">Crespo Wallet</h4>
-          <span id="crespoStatusBadge" class="sc-badge">Not Linked</span>
+          <h4 style="margin:0;">bKash, Nagad &amp; Rocket Accounts</h4>
+          <span class="sc-badge">MFS Hub</span>
         </div>
-        <input type="text" id="crespoAddressInput" class="sc-input" placeholder="Enter Crespo Wallet ID / Address (e.g. CRSP_0x8a92...)">
-        <input type="text" id="crespoBalanceInput" class="sc-input" placeholder="Displayed Balance (e.g. 125.50 CRSP)">
-        <button type="button" class="sc-btn-green" onclick="saveCrespoWallet()">Save / Link Crespo Wallet</button>
-        <div id="crespoWalletCard" style="margin-top:12px;"></div>
-      </div>
-
-      <!-- bKash & Nagad Section -->
-      <div class="sc-box">
-        <h4>bKash &amp; Nagad Accounts</h4>
         <select id="mfsProviderSelect" class="sc-select">
           <option value="bKash">bKash</option>
           <option value="Nagad">Nagad</option>
+          <option value="Rocket">Rocket</option>
         </select>
-        <input type="tel" id="mfsNumberInput" class="sc-input" placeholder="bKash / Nagad Personal Number (01XXXXXXXXX)">
+        <input type="tel" id="mfsNumberInput" class="sc-input" placeholder="11-digit BD number (01XXXXXXXXX)">
         <select id="mfsTypeSelect" class="sc-select">
           <option value="Personal">Personal</option>
           <option value="Merchant">Merchant</option>
           <option value="Agent">Agent</option>
         </select>
-        <button type="button" class="sc-btn-green" onclick="saveMfsAccount()">Save bKash / Nagad</button>
+        <button type="button" class="sc-btn-green" onclick="saveMfsAccount()">Save MFS Account</button>
         <div id="mfsAccountsList" style="margin-top:12px;"></div>
       </div>
 
-      <!-- Quick Send / Transfer Log -->
       <div class="sc-box">
-        <h4>Quick Transfer &amp; Payment Note</h4>
+        <h4>Crespo Wallet</h4>
+        <input type="text" id="crespoAddressInput" class="sc-input" placeholder="Crespo Wallet Address / ID">
+        <input type="text" id="crespoBalanceInput" class="sc-input" placeholder="Balance note (e.g. 250.00 CRSP)">
+        <button type="button" class="sc-btn-green" onclick="saveCrespoWallet()">Save Crespo Wallet</button>
+        <div id="crespoWalletCard" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="sc-box">
+        <h4>Send Money / Payment Log (bKash • Nagad • Rocket • Crespo)</h4>
         <select id="payChannelSelect" class="sc-select">
-          <option value="Crespo Wallet">Crespo Wallet</option>
           <option value="bKash">bKash</option>
           <option value="Nagad">Nagad</option>
+          <option value="Rocket">Rocket</option>
+          <option value="Crespo Wallet">Crespo Wallet</option>
         </select>
-        <input type="text" id="payReceiverInput" class="sc-input" placeholder="Receiver Number / Crespo Address">
-        <input type="number" id="payAmountInput" class="sc-input" placeholder="Amount">
-        <button type="button" class="sc-btn-green" onclick="recordPayment()">Record Transfer</button>
+        <input type="text" id="payReceiverInput" class="sc-input" placeholder="Receiver Number (01XXXXXXXXX) or Wallet ID">
+        <input type="number" id="payAmountInput" class="sc-input" placeholder="Amount (BDT / Token)">
+        <input type="text" id="payTrxRefInput" class="sc-input" placeholder="Transaction / Gateway Ref ID (optional)">
+        <button type="button" class="sc-btn-green" onclick="initiatePayment()">Submit Transaction Record</button>
         <div id="paymentHistoryList" style="margin-top:12px;"></div>
       </div>
     </div>
 
-    <!-- ME TAB: Profile & My Number -->
+    <!-- ME TAB -->
     <div id="me" class="sc-tab-page">
       <div class="sc-card static-card">
         <div class="sc-avatar av-orange">👤</div>
@@ -306,8 +305,10 @@
         </div>
       </div>
       <div class="sc-box">
-        <h4>Account &amp; Payment Summary</h4>
-        <p id="meSummaryText" style="margin:0; font-size:13px; color:#c7d0dc; line-height:1.6;"></p>
+        <h4>Security &amp; Payment Notice</h4>
+        <p style="margin:0; font-size:13px; color:#c7d0dc; line-height:1.6;">
+          Live bKash, Nagad, and Rocket money movement requires verified merchant API credentials running on a secure backend server (Node.js / Firebase Cloud Functions) plus Firestore security rules.
+        </p>
       </div>
     </div>
   </div>
@@ -324,7 +325,7 @@
   <div id="chatRoom" class="sc-chat-room">
     <div class="sc-header">
       <div style="cursor:pointer; font-weight:700;" onclick="closeChat()">⬅️ <span id="chatPartnerName">Chat</span></div>
-      <span style="font-size:12px; color:#07C160;">SuperChat</span>
+      <span style="font-size:12px; color:#07C160;">Verified Room</span>
     </div>
     <div id="chatMessages" class="sc-chat-messages"></div>
     <div class="sc-chat-input-area">
@@ -352,8 +353,12 @@
     const db = firebase.firestore();
 
     let currentUser = null;
+    let currentProfile = null;
     let currentRoomId = null;
     let unsubscribeChat = null;
+    let unsubscribeIncoming = null;
+    let unsubscribeOutgoing = null;
+    let acceptedFriends = [];
 
     function normalizePhone(countryCode, rawPhone) {
       let digits = (rawPhone || '').replace(/\D/g, '');
@@ -361,15 +366,18 @@
       if (!digits) return null;
 
       if (digits.startsWith(ccDigits)) {
-        // already has country code
+        // already includes country code
       } else if (ccDigits === '880' && digits.startsWith('0')) {
         digits = '880' + digits.slice(1);
       } else {
         digits = ccDigits + digits;
       }
 
+      if (ccDigits === '880' && digits.length !== 13) return null;
       if (digits.length < 10) return null;
+
       return {
+        digits: digits,
         display: '+' + digits,
         authId: digits + '@superchat.phone'
       };
@@ -397,6 +405,27 @@
       }
     }
 
+    async function ensureUserDirectoryDoc(user, fallbackName, fallbackPhoneObj) {
+      const digits = fallbackPhoneObj
+        ? fallbackPhoneObj.digits
+        : ((user.email || '').split('@')[0] || '');
+      const displayPhone = fallbackPhoneObj ? fallbackPhoneObj.display : ('+' + digits);
+      const name = fallbackName || user.displayName || displayPhone;
+
+      const profile = {
+        uid: user.uid,
+        name: name,
+        phoneDigits: digits,
+        phoneDisplay: displayPhone,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      await db.collection('users').doc(user.uid).set(profile, { merge: true });
+      currentProfile = { ...profile, uid: user.uid };
+      document.getElementById('meNameDisplay').textContent = name;
+      document.getElementById('mePhoneDisplay').textContent = displayPhone;
+    }
+
     async function handleRegister() {
       const name = document.getElementById('signupName').value.trim();
       const cc = document.getElementById('signupCountry').value;
@@ -406,18 +435,19 @@
       const err = document.getElementById('signupError');
 
       const phoneObj = normalizePhone(cc, rawPhone);
-      if (!name) { err.textContent = "Enter your name."; return; }
-      if (!phoneObj) { err.textContent = "Enter a valid phone number."; return; }
+      if (!name || name.length < 2) { err.textContent = "Enter your full name."; return; }
+      if (!phoneObj) { err.textContent = "Enter a valid mobile number (e.g. 01712345678)."; return; }
       if (pass.length < 6) { err.textContent = "Password must be at least 6 characters."; return; }
-      if (!agreed) { err.textContent = "Please accept Terms & Privacy Policy."; return; }
+      if (!agreed) { err.textContent = "Please accept Terms & Anti-Fraud Policy."; return; }
 
       err.style.color = "#07C160";
-      err.textContent = "Creating account...";
+      err.textContent = "Registering verified user...";
 
       try {
         const cred = await auth.createUserWithEmailAndPassword(phoneObj.authId, pass);
         if (cred.user) {
           await cred.user.updateProfile({ displayName: name });
+          await ensureUserDirectoryDoc(cred.user, name, phoneObj);
         }
         document.getElementById('scSignupModal').style.display = 'none';
       } catch (e) {
@@ -435,12 +465,12 @@
       const phoneObj = normalizePhone(cc, rawPhone);
       if (!phoneObj || !pass) {
         err.style.color = "#ff4d4f";
-        err.textContent = "Enter mobile number and password.";
+        err.textContent = "Enter valid mobile number and password.";
         return;
       }
 
       err.style.color = "#07C160";
-      err.textContent = "Logging in...";
+      err.textContent = "Signing in...";
 
       try {
         await auth.signInWithEmailAndPassword(phoneObj.authId, pass);
@@ -453,6 +483,8 @@
 
     function handleLogout() {
       closeChat();
+      if (unsubscribeIncoming) unsubscribeIncoming();
+      if (unsubscribeOutgoing) unsubscribeOutgoing();
       auth.signOut();
     }
 
@@ -462,175 +494,207 @@
       document.getElementById(id).classList.add('active');
       if (btn) btn.classList.add('active');
       document.querySelector('.sc-header-title span').textContent = title;
-      if (id === 'me') renderMeSummary();
     }
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
         document.getElementById('scSplash').style.display = 'none';
         document.getElementById('scLoginModal').style.display = 'none';
         document.getElementById('scSignupModal').style.display = 'none';
 
-        const phoneText = user.email ? '+' + user.email.split('@')[0] : '';
-        document.getElementById('meNameDisplay').textContent = user.displayName || 'SuperChat User';
-        document.getElementById('mePhoneDisplay').textContent = phoneText;
-
-        renderFriendsAndChats();
-        renderCrespoWallet();
+        await ensureUserDirectoryDoc(user, user.displayName, null);
+        listenFriendRequests();
         renderMfsAccounts();
+        renderCrespoWallet();
         renderPaymentHistory();
-        renderMeSummary();
       } else {
         currentUser = null;
+        currentProfile = null;
+        acceptedFriends = [];
         document.getElementById('scSplash').style.display = 'flex';
       }
     });
 
-    /* FRIENDS & CONTACT NUMBERS */
-    function getFriends() {
-      if (!currentUser) return [];
-      return JSON.parse(localStorage.getItem('sc_friends_v2_' + currentUser.uid) || '[]');
-    }
-
-    function saveFriends(list) {
-      if (!currentUser) return;
-      localStorage.setItem('sc_friends_v2_' + currentUser.uid, JSON.stringify(list));
-    }
-
-    function handleAddFriend() {
-      if (!currentUser) return;
-      const customName = document.getElementById('friendNameInput').value.trim();
-      const rawPhone = document.getElementById('friendPhoneInput').value.trim();
+    /* VERIFIED DIRECTORY + FRIEND REQUEST FLOW */
+    async function sendFriendRequest() {
+      if (!currentUser || !currentProfile) return;
+      const rawPhone = document.getElementById('requestPhoneInput').value.trim();
+      const feedback = document.getElementById('requestFeedback');
       const phoneObj = normalizePhone('+880', rawPhone);
 
       if (!phoneObj) {
-        alert("সঠিক মোবাইল নম্বর দিন (যেমন 01712345678)।");
-        return;
-      }
-      if (phoneObj.authId === currentUser.email.toLowerCase()) {
-        alert("নিজের নম্বর ফ্রেন্ড হিসেবে যোগ করা যাবে না।");
+        feedback.style.color = "#ff4d4f";
+        feedback.textContent = "সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।";
         return;
       }
 
-      const friends = getFriends();
-      const exists = friends.some(f => f.authId === phoneObj.authId);
-      if (!exists) {
-        friends.push({
-          name: customName || phoneObj.display,
-          phone: phoneObj.display,
-          authId: phoneObj.authId
-        });
-        saveFriends(friends);
+      if (phoneObj.digits === currentProfile.phoneDigits) {
+        feedback.style.color = "#ff4d4f";
+        feedback.textContent = "নিজের নম্বরে ফ্রেন্ড রিকোয়েস্ট পাঠানো যাবে না।";
+        return;
       }
 
-      document.getElementById('friendNameInput').value = '';
-      document.getElementById('friendPhoneInput').value = '';
-      renderFriendsAndChats();
-      alert("Friend ও Contact Number যুক্ত হয়েছে!");
-    }
+      feedback.style.color = "#07C160";
+      feedback.textContent = "রেজিস্টার্ড ইউজার যাচাই করা হচ্ছে...";
 
-    async function importDeviceContacts() {
-      if (!currentUser) return;
-      if ('contacts' in navigator && 'select' in navigator.contacts) {
-        try {
-          const picked = await navigator.contacts.select(['name', 'tel'], { multiple: true });
-          const friends = getFriends();
-          let added = 0;
-          picked.forEach(c => {
-            const rawTel = (c.tel && c.tel[0]) || '';
-            const phoneObj = normalizePhone('+880', rawTel);
-            if (phoneObj && phoneObj.authId !== currentUser.email.toLowerCase()) {
-              if (!friends.some(f => f.authId === phoneObj.authId)) {
-                friends.push({
-                  name: (c.name && c.name[0]) || phoneObj.display,
-                  phone: phoneObj.display,
-                  authId: phoneObj.authId
-                });
-                added++;
-              }
-            }
-          });
-          saveFriends(friends);
-          renderFriendsAndChats();
-          alert(added > 0 ? `${added}টি কন্ট্যাক্ট যোগ হয়েছে।` : "নতুন কোনো কন্ট্যাক্ট যোগ হয়নি।");
-        } catch (err) {
-          alert("Contact picker বাতিল বা সাপোর্ট করছে না। নিচের ফর্ম থেকে নম্বর লিখে Add Friend করুন।");
+      try {
+        const snap = await db.collection('users')
+          .where('phoneDigits', '==', phoneObj.digits)
+          .limit(1)
+          .get();
+
+        if (snap.empty) {
+          feedback.style.color = "#ff4d4f";
+          feedback.textContent = "এই নম্বরে কোনো ভেরিফাইড SuperChat অ্যাকাউন্ট পাওয়া যায়নি।";
+          return;
         }
-      } else {
-        alert("এই ব্রাউজারে সরাসরি ফোনবুক সিঙ্ক সাপোর্ট করছে না—নিচের বক্সে নাম ও মোবাইল নম্বর লিখে Add Friend বাটনে চাপুন।");
+
+        const targetDoc = snap.docs[0].data();
+        const reqId = [currentUser.uid, targetDoc.uid].sort().join('_');
+
+        await db.collection('friend_requests').doc(reqId).set({
+          reqId: reqId,
+          fromUid: currentUser.uid,
+          fromName: currentProfile.name,
+          fromPhone: currentProfile.phoneDisplay,
+          toUid: targetDoc.uid,
+          toName: targetDoc.name,
+          toPhone: targetDoc.phoneDisplay,
+          participants: [currentUser.uid, targetDoc.uid],
+          status: 'pending',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        document.getElementById('requestPhoneInput').value = '';
+        feedback.style.color = "#07C160";
+        feedback.textContent = `${targetDoc.name} (${targetDoc.phoneDisplay})-এর কাছে Friend Request পাঠানো হয়েছে।`;
+      } catch (err) {
+        feedback.style.color = "#ff4d4f";
+        feedback.textContent = "Request error: " + err.message;
       }
     }
 
-    function copyText(val) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(val).then(() => alert("Copied: " + val));
-      } else {
-        alert("Number/ID: " + val);
-      }
-    }
-
-    function renderFriendsAndChats() {
+    function listenFriendRequests() {
       if (!currentUser) return;
-      const friends = getFriends();
-      const fList = document.getElementById('friendsList');
-      const pList = document.getElementById('privateChatList');
-      fList.innerHTML = '';
-      pList.innerHTML = '';
+      if (unsubscribeIncoming) unsubscribeIncoming();
+      if (unsubscribeOutgoing) unsubscribeOutgoing();
 
-      if (friends.length === 0) {
-        fList.innerHTML = `<p style="font-size:13px; color:#8c96a6;">এখনো কোনো ফ্রেন্ড বা কন্ট্যাক্ট নম্বর যোগ করা হয়নি।</p>`;
-        pList.innerHTML = `<div class="sc-box"><p style="margin:0; font-size:13px; color:#8c96a6;">Private chat-এর জন্য আগে Contacts ট্যাব থেকে Friend যোগ করুন।</p></div>`;
-        return;
+      const incomingMap = new Map();
+      const outgoingMap = new Map();
+
+      function rebuildLists() {
+        const incomingEl = document.getElementById('incomingRequestsList');
+        const outgoingEl = document.getElementById('outgoingRequestsList');
+        const friendsEl = document.getElementById('acceptedFriendsList');
+        const chatListEl = document.getElementById('acceptedChatList');
+
+        const pendingIn = Array.from(incomingMap.values()).filter(r => r.status === 'pending');
+        const pendingOut = Array.from(outgoingMap.values()).filter(r => r.status === 'pending');
+
+        const mergedAccepted = new Map();
+        Array.from(incomingMap.values()).concat(Array.from(outgoingMap.values())).forEach(r => {
+          if (r.status === 'accepted') {
+            const isFromMe = r.fromUid === currentUser.uid;
+            const peerUid = isFromMe ? r.toUid : r.fromUid;
+            const peerName = isFromMe ? r.toName : r.fromName;
+            const peerPhone = isFromMe ? r.toPhone : r.fromPhone;
+            const roomId = [currentUser.uid, peerUid].sort().join('_');
+            mergedAccepted.set(peerUid, { peerUid, peerName, peerPhone, roomId });
+          }
+        });
+
+        acceptedFriends = Array.from(mergedAccepted.values());
+
+        incomingEl.innerHTML = pendingIn.length === 0
+          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`
+          : pendingIn.map(r => `
+            <div class="sc-card static-card">
+              <div class="sc-avatar av-blue">📩</div>
+              <div style="flex:1;">
+                <h4 style="margin:0 0 3px;">${r.fromName}</h4>
+                <p style="margin:0; font-size:12px; color:#07C160;">${r.fromPhone}</p>
+              </div>
+              <button type="button" class="sc-btn-green" style="width:auto; padding:7px 10px; font-size:12px;" onclick="respondRequest('${r.reqId}', 'accepted')">Accept</button>
+              <button type="button" class="sc-btn-danger" onclick="respondRequest('${r.reqId}', 'rejected')">Reject</button>
+            </div>
+          `).join('');
+
+        outgoingEl.innerHTML = pendingOut.length === 0
+          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো পাঠানো পেন্ডিং রিকোয়েস্ট নেই।</p>`
+          : pendingOut.map(r => `
+            <div class="sc-card static-card">
+              <div class="sc-avatar av-orange">⏳</div>
+              <div style="flex:1;">
+                <h4 style="margin:0 0 3px;">${r.toName}</h4>
+                <p style="margin:0; font-size:12px; color:#9aa4b2;">${r.toPhone} • Pending</p>
+              </div>
+            </div>
+          `).join('');
+
+        friendsEl.innerHTML = acceptedFriends.length === 0
+          ? `<p style="margin:0; font-size:12px; color:#8c96a6;">এখনো কোনো ফ্রেন্ড যুক্ত হয়নি।</p>`
+          : acceptedFriends.map(f => `
+            <div class="sc-card static-card">
+              <div class="sc-avatar av-green">📞</div>
+              <div style="flex:1;">
+                <h4 style="margin:0 0 3px;">${f.peerName}</h4>
+                <p style="margin:0; font-size:12px; color:#07C160;">${f.peerPhone}</p>
+              </div>
+              <button type="button" class="sc-btn-green" style="width:auto; padding:7px 12px; font-size:12px;" onclick="openChat('${f.roomId}', '${f.peerName}')">Chat</button>
+            </div>
+          `).join('');
+
+        chatListEl.innerHTML = acceptedFriends.length === 0
+          ? `<div class="sc-box"><p style="margin:0; font-size:12px; color:#8c96a6;">Contacts ট্যাব থেকে Friend Request পাঠিয়ে Accept হলে প্রাইভেট চ্যাট এখানে দেখাবে।</p></div>`
+          : acceptedFriends.map(f => `
+            <div class="sc-card" onclick="openChat('${f.roomId}', '${f.peerName}')">
+              <div class="sc-avatar av-blue">👤</div>
+              <div style="flex:1;">
+                <h4 style="margin:0 0 3px;">${f.peerName}</h4>
+                <p style="margin:0; font-size:12px; color:#07C160;">${f.peerPhone} • Verified Friend</p>
+              </div>
+            </div>
+          `).join('');
       }
 
-      friends.forEach(friend => {
-        const roomId = [currentUser.email.toLowerCase(), friend.authId].sort().join('_').replace(/[^a-zA-Z0-9]/g, '');
+      unsubscribeIncoming = db.collection('friend_requests')
+        .where('toUid', '==', currentUser.uid)
+        .onSnapshot(snap => {
+          incomingMap.clear();
+          snap.forEach(doc => incomingMap.set(doc.id, doc.data()));
+          rebuildLists();
+        });
 
-        // Contacts Tab Card (shows name + contact number + copy + chat)
-        const cCard = document.createElement('div');
-        cCard.className = 'sc-card static-card';
-        cCard.innerHTML = `
-          <div class="sc-avatar av-blue">📞</div>
-          <div style="flex:1;">
-            <h4 style="margin:0 0 3px;">${friend.name}</h4>
-            <p style="margin:0; font-size:13px; color:#07C160; font-weight:600;">${friend.phone}</p>
-          </div>
-          <button type="button" class="sc-btn-outline" onclick="copyText('${friend.phone}')">Copy</button>
-          <button type="button" class="sc-btn-green" style="width:auto; padding:7px 12px; font-size:12px;" onclick="openChat('${roomId}', '${friend.name}')">Chat</button>
-        `;
-        fList.appendChild(cCard);
-
-        // Chats Tab Card (only added friends appear here)
-        const chatCard = document.createElement('div');
-        chatCard.className = 'sc-card';
-        chatCard.innerHTML = `
-          <div class="sc-avatar av-blue">👤</div>
-          <div style="flex:1;">
-            <h4 style="margin:0 0 3px;">${friend.name}</h4>
-            <p style="margin:0; font-size:12px; color:#9aa4b2;">${friend.phone} • Tap for private chat</p>
-          </div>
-        `;
-        chatCard.onclick = () => openChat(roomId, friend.name);
-        pList.appendChild(chatCard);
-      });
+      unsubscribeOutgoing = db.collection('friend_requests')
+        .where('fromUid', '==', currentUser.uid)
+        .onSnapshot(snap => {
+          outgoingMap.clear();
+          snap.forEach(doc => outgoingMap.set(doc.id, doc.data()));
+          rebuildLists();
+        });
     }
 
-    /* STRICT FRIEND CHECK FOR PRIVATE CHAT */
-    function isAllowedRoom(roomId) {
+    async function respondRequest(reqId, status) {
+      try {
+        await db.collection('friend_requests').doc(reqId).update({
+          status: status,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (err) {
+        alert("Action error: " + err.message);
+      }
+    }
+
+    function isAllowedChatRoom(roomId) {
       if (roomId === 'global_chat') return true;
-      if (!currentUser) return false;
-      const friends = getFriends();
-      return friends.some(f => {
-        const expectedId = [currentUser.email.toLowerCase(), f.authId].sort().join('_').replace(/[^a-zA-Z0-9]/g, '');
-        return expectedId === roomId;
-      });
+      return acceptedFriends.some(f => f.roomId === roomId);
     }
 
     function openChat(roomId, title) {
       if (!currentUser) return;
-      if (!isAllowedRoom(roomId)) {
-        alert("আগে Contacts ট্যাব থেকে এই ব্যক্তিকে Friend হিসেবে যোগ করুন, তারপর প্রাইভেট চ্যাট শুরু হবে।");
+      if (!isAllowedChatRoom(roomId)) {
+        alert("এই ইউজারের সাথে এখনো Accepted Friend সম্পর্ক তৈরি হয়নি।");
         return;
       }
 
@@ -641,10 +705,7 @@
       const msgBox = document.getElementById('chatMessages');
       msgBox.innerHTML = '';
 
-      if (unsubscribeChat) {
-        unsubscribeChat();
-        unsubscribeChat = null;
-      }
+      if (unsubscribeChat) unsubscribeChat();
 
       const collectionPath = roomId === 'global_chat'
         ? 'global_chat'
@@ -653,9 +714,9 @@
       unsubscribeChat = db.collection(collectionPath)
         .orderBy('createdAt', 'asc')
         .limit(100)
-        .onSnapshot((snapshot) => {
+        .onSnapshot(snapshot => {
           msgBox.innerHTML = '';
-          snapshot.forEach((doc) => {
+          snapshot.forEach(doc => {
             const data = doc.data();
             const isMe = data.senderUid === currentUser.uid;
             const div = document.createElement('div');
@@ -686,7 +747,7 @@
     }
 
     async function handleSend() {
-      if (!currentUser || !currentRoomId || !isAllowedRoom(currentRoomId)) return;
+      if (!currentUser || !currentRoomId || !isAllowedChatRoom(currentRoomId)) return;
       const input = document.getElementById('messageInput');
       const text = input.value.trim();
       if (!text) return;
@@ -699,7 +760,7 @@
         await db.collection(collectionPath).add({
           text: text,
           senderUid: currentUser.uid,
-          senderName: currentUser.displayName || ('+' + (currentUser.email || '').split('@')[0]),
+          senderName: (currentProfile && currentProfile.name) || 'User',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         input.value = '';
@@ -708,38 +769,70 @@
       }
     }
 
-    /* CRESPO WALLET, bKash & NAGAD */
+    /* bKash, NAGAD, ROCKET & CRESPO WALLET */
+    function saveMfsAccount() {
+      if (!currentUser) return;
+      const provider = document.getElementById('mfsProviderSelect').value;
+      const rawNum = document.getElementById('mfsNumberInput').value.trim();
+      const accType = document.getElementById('mfsTypeSelect').value;
+      const phoneObj = normalizePhone('+880', rawNum);
+
+      if (!phoneObj) {
+        alert("সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।");
+        return;
+      }
+
+      const key = 'sc_mfs_v3_' + currentUser.uid;
+      const list = JSON.parse(localStorage.getItem(key) || '[]').filter(x => x.provider !== provider);
+      list.unshift({ provider, number: phoneObj.display, accType });
+      localStorage.setItem(key, JSON.stringify(list));
+      document.getElementById('mfsNumberInput').value = '';
+      renderMfsAccounts();
+    }
+
+    function renderMfsAccounts() {
+      if (!currentUser) return;
+      const list = JSON.parse(localStorage.getItem('sc_mfs_v3_' + currentUser.uid) || '[]');
+      const wrap = document.getElementById('mfsAccountsList');
+      if (list.length === 0) {
+        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো bKash, Nagad বা Rocket নম্বর যুক্ত করা হয়নি।</p>`;
+        return;
+      }
+      wrap.innerHTML = list.map(acc => `
+        <div class="sc-card static-card">
+          <div class="sc-avatar av-pink">💳</div>
+          <div style="flex:1;">
+            <h4 style="margin:0 0 3px;">${acc.provider} (${acc.accType})</h4>
+            <p style="margin:0; font-size:12px; color:#07C160;">${acc.number}</p>
+          </div>
+          <button type="button" class="sc-btn-outline" onclick="copyText('${acc.number}')">Copy</button>
+        </div>
+      `).join('');
+    }
+
     function saveCrespoWallet() {
       if (!currentUser) return;
-      const addr = document.getElementById('crespoAddressInput').value.trim();
-      const bal = document.getElementById('crespoBalanceInput').value.trim() || '0.00 CRSP';
-      if (!addr || addr.length < 4) {
+      const address = document.getElementById('crespoAddressInput').value.trim();
+      const balance = document.getElementById('crespoBalanceInput').value.trim() || '0.00 CRSP';
+      if (!address || address.length < 4) {
         alert("সঠিক Crespo Wallet Address বা ID দিন।");
         return;
       }
-      const walletData = { address: addr, balance: bal, updatedAt: Date.now() };
-      localStorage.setItem('sc_crespo_' + currentUser.uid, JSON.stringify(walletData));
+      localStorage.setItem('sc_crespo_v3_' + currentUser.uid, JSON.stringify({ address, balance }));
       renderCrespoWallet();
-      renderMeSummary();
-      alert("Crespo Wallet সফলভাবে যুক্ত হয়েছে!");
     }
 
     function renderCrespoWallet() {
       if (!currentUser) return;
-      const raw = localStorage.getItem('sc_crespo_' + currentUser.uid);
-      const badge = document.getElementById('crespoStatusBadge');
+      const raw = localStorage.getItem('sc_crespo_v3_' + currentUser.uid);
       const wrap = document.getElementById('crespoWalletCard');
-
       if (!raw) {
-        badge.textContent = 'Not Linked';
         wrap.innerHTML = '';
         return;
       }
-
       const w = JSON.parse(raw);
       document.getElementById('crespoAddressInput').value = w.address;
       document.getElementById('crespoBalanceInput').value = w.balance;
-      badge.textContent = 'Connected';
       wrap.innerHTML = `
         <div class="sc-card static-card" style="margin-bottom:0;">
           <div class="sc-avatar av-orange">🪙</div>
@@ -752,111 +845,60 @@
       `;
     }
 
-    function getMfsList() {
-      if (!currentUser) return [];
-      return JSON.parse(localStorage.getItem('sc_mfs_' + currentUser.uid) || '[]');
-    }
-
-    function saveMfsAccount() {
-      if (!currentUser) return;
-      const provider = document.getElementById('mfsProviderSelect').value;
-      const rawNum = document.getElementById('mfsNumberInput').value.trim();
-      const accType = document.getElementById('mfsTypeSelect').value;
-      const phoneObj = normalizePhone('+880', rawNum);
-
-      if (!phoneObj) {
-        alert("সঠিক bKash বা Nagad নম্বর দিন (যেমন 01712345678)।");
-        return;
-      }
-
-      const list = getMfsList().filter(item => item.provider !== provider);
-      list.unshift({
-        provider: provider,
-        number: phoneObj.display,
-        accType: accType
-      });
-      localStorage.setItem('sc_mfs_' + currentUser.uid, JSON.stringify(list));
-      document.getElementById('mfsNumberInput').value = '';
-      renderMfsAccounts();
-      renderMeSummary();
-      alert(`${provider} নম্বর যুক্ত হয়েছে!`);
-    }
-
-    function renderMfsAccounts() {
-      if (!currentUser) return;
-      const list = getMfsList();
-      const wrap = document.getElementById('mfsAccountsList');
-      if (list.length === 0) {
-        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো bKash বা Nagad নম্বর যুক্ত করা হয়নি।</p>`;
-        return;
-      }
-
-      wrap.innerHTML = list.map(acc => `
-        <div class="sc-card static-card">
-          <div class="sc-avatar av-pink">${acc.provider === 'bKash' ? '🅱️' : '🅽'}</div>
-          <div style="flex:1;">
-            <h4 style="margin:0 0 3px;">${acc.provider} (${acc.accType})</h4>
-            <p style="margin:0; font-size:13px; color:#07C160; font-weight:600;">${acc.number}</p>
-          </div>
-          <button type="button" class="sc-btn-outline" onclick="copyText('${acc.number}')">Copy</button>
-        </div>
-      `).join('');
-    }
-
-    function recordPayment() {
+    function initiatePayment() {
       if (!currentUser) return;
       const channel = document.getElementById('payChannelSelect').value;
       const receiver = document.getElementById('payReceiverInput').value.trim();
       const amount = document.getElementById('payAmountInput').value.trim();
+      const refId = document.getElementById('payTrxRefInput').value.trim() || ('TX-' + Date.now());
 
       if (!receiver || !amount || Number(amount) <= 0) {
         alert("Receiver এবং সঠিক Amount দিন।");
         return;
       }
 
-      const key = 'sc_tx_' + currentUser.uid;
-      const history = JSON.parse(localStorage.getItem(key) || '[]');
-      history.unshift({
+      const key = 'sc_tx_v3_' + currentUser.uid;
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.unshift({
         channel,
         receiver,
         amount,
+        refId,
         time: new Date().toLocaleString()
       });
-      localStorage.setItem(key, JSON.stringify(history));
+      localStorage.setItem(key, JSON.stringify(list));
+
       document.getElementById('payReceiverInput').value = '';
       document.getElementById('payAmountInput').value = '';
+      document.getElementById('payTrxRefInput').value = '';
       renderPaymentHistory();
     }
 
     function renderPaymentHistory() {
       if (!currentUser) return;
-      const history = JSON.parse(localStorage.getItem('sc_tx_' + currentUser.uid) || '[]');
+      const list = JSON.parse(localStorage.getItem('sc_tx_v3_' + currentUser.uid) || '[]');
       const wrap = document.getElementById('paymentHistoryList');
-      if (history.length === 0) {
-        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো লেনদেন নোট নেই।</p>`;
+      if (list.length === 0) {
+        wrap.innerHTML = `<p style="margin:0; font-size:12px; color:#8c96a6;">কোনো লেনদেন রেকর্ড নেই।</p>`;
         return;
       }
-      wrap.innerHTML = history.slice(0, 10).map(item => `
+      wrap.innerHTML = list.slice(0, 12).map(item => `
         <div class="sc-card static-card">
           <div class="sc-avatar av-green">💸</div>
           <div style="flex:1;">
             <h4 style="margin:0 0 3px;">${item.channel} • ${item.amount}</h4>
-            <p style="margin:0; font-size:12px; color:#9aa4b2;">To: ${item.receiver} (${item.time})</p>
+            <p style="margin:0; font-size:12px; color:#9aa4b2;">To: ${item.receiver} | Ref: ${item.refId}</p>
           </div>
         </div>
       `).join('');
     }
 
-    function renderMeSummary() {
-      if (!currentUser) return;
-      const friendsCount = getFriends().length;
-      const crespoRaw = localStorage.getItem('sc_crespo_' + currentUser.uid);
-      const crespoText = crespoRaw ? JSON.parse(crespoRaw).balance : 'Not linked';
-      const mfsText = getMfsList().map(m => `${m.provider}: ${m.number}`).join(' | ') || 'None';
-      document.getElementById('meSummaryText').innerHTML =
-        `Friends &amp; Contacts: <b>${friendsCount}</b><br>` +
-        `Crespo Wallet: <b>${crespoText}</b><br>` +
-        `bKash / Nagad: <b>${mfsText}</b>`;
+    function copyText(val) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).then(() => alert("Copied: " + val));
+      } else {
+        alert(val);
+      }
     }
   </script>
 </body>
