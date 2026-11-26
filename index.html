@@ -6,53 +6,201 @@
   <title>SuperChat</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css?v=99">
-  <!-- Direct Reliable Firebase SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #111; color: #fff; }
+
+    /* Dark Welcome Screen */
+    .sc-splash {
+      position: fixed; inset: 0; z-index: 999;
+      background: radial-gradient(circle at 50% 35%, #1d2b3a 0%, #0b0d10 70%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 28px 20px 44px;
+    }
+    .sc-brand {
+      position: absolute; top: 18%; left: 0; right: 0;
+      text-align: center;
+    }
+    .sc-brand h1 { margin: 0; font-size: 30px; letter-spacing: 0.5px; color: #fff; }
+    .sc-brand p { margin: 6px 0 0; font-size: 13px; color: #9aa4b2; }
+    .sc-btn-stack { display: flex; flex-direction: column; gap: 12px; }
+    .sc-btn-primary {
+      width: 100%; padding: 14px; border: none; border-radius: 8px;
+      background: #07C160; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    }
+    .sc-btn-dark {
+      width: 100%; padding: 14px; border: 1px solid #2b3038; border-radius: 8px;
+      background: #1c1f24; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    }
+    .sc-btn-cancel {
+      width: 100%; padding: 12px; border: none; background: transparent;
+      color: #9aa4b2; font-size: 14px; cursor: pointer;
+    }
+
+    /* Fullscreen Dark Auth Modal */
+    .sc-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #121212; color: #fff;
+      display: none; flex-direction: column; padding: 20px; overflow-y: auto;
+    }
+    .sc-top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .sc-close-btn {
+      background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; padding: 4px 8px;
+    }
+    .sc-modal h2 { margin: 0 0 20px; font-size: 24px; font-weight: 600; }
+    .sc-field-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 4px; border-bottom: 1px solid #262626;
+    }
+    .sc-field-label { width: 105px; font-size: 14px; color: #b8c0cc; flex-shrink: 0; }
+    .sc-field-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #fff; font-size: 15px;
+    }
+    .sc-field-input::placeholder { color: #666; }
+    .sc-check-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: 22px; font-size: 13px; color: #9aa4b2; line-height: 1.45;
+    }
+    .sc-error {
+      color: #ff4d4f; font-size: 13px; min-height: 18px; margin-top: 14px; font-weight: 600;
+    }
+    .sc-submit-wrap { margin-top: auto; padding-top: 24px; }
+    .sc-verify-box {
+      margin-top: 20px; padding: 24px 16px; border-radius: 12px;
+      background: #1a1d22; border: 1px solid #2a2f37; text-align: center;
+    }
+    .sc-verify-icon {
+      width: 44px; height: 44px; border-radius: 50%; border: 2px solid #2979ff;
+      color: #2979ff; display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 20px; margin-bottom: 12px;
+    }
+    .sc-policy-box {
+      background: #191c20; border: 1px solid #262b33; border-radius: 10px;
+      padding: 16px; font-size: 13px; line-height: 1.6; color: #c7d0dc;
+    }
+  </style>
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- Realistic Solar System Welcome Screen -->
-  <div id="wechatSplash" class="wechat-splash">
-    <div class="stars-bg"></div>
-    <div class="solar-system">
-      <div class="sun-core"></div>
-      <div class="orbit o1"><div class="planet p1"></div></div>
-      <div class="orbit o2"><div class="planet p2"></div></div>
-      <div class="orbit o3">
-        <div class="planet p3">
-          <div class="moon-orbit mo1"><div class="moon m1"></div></div>
-        </div>
-      </div>
-      <div class="orbit o4"><div class="planet p4"></div></div>
-      <div class="orbit o5">
-        <div class="planet p5">
-          <div class="moon-orbit mo2"><div class="moon m2"></div></div>
-          <div class="moon-orbit mo3"><div class="moon m3"></div></div>
-        </div>
-      </div>
-      <div class="orbit o6">
-        <div class="planet p6"><div class="saturn-ring"></div></div>
-      </div>
+  <!-- 1. Dark Welcome Screen -->
+  <div id="scSplash" class="sc-splash">
+    <div class="sc-brand">
+      <h1>SuperChat</h1>
+      <p>Private &amp; Encrypted Messaging</p>
     </div>
-    <div class="welcome-btns">
-      <button type="button" class="w-btn w-login" onclick="showAuth('login')">Log In</button>
-      <button type="button" class="w-btn w-signup" onclick="showAuth('signup')">Sign Up</button>
+    <div class="sc-btn-stack">
+      <button type="button" class="sc-btn-primary" onclick="openLoginModal()">Log In</button>
+      <button type="button" class="sc-btn-dark" onclick="openSignupModal()">Sign Up</button>
+      <button type="button" class="sc-btn-cancel" onclick="closeAllAuth()">Cancel</button>
     </div>
   </div>
 
-  <!-- Log In & Sign Up Modal -->
-  <div id="authScreen" class="auth-screen" style="display:none;">
-    <div class="auth-box">
-      <h2 id="authTitle">Log In</h2>
-      <p style="font-size:13px; color:#666; margin-bottom:14px;">Enter your secure account details</p>
-      <input type="email" id="authEmail" class="auth-input" placeholder="Email address">
-      <input type="password" id="authPass" class="auth-input" placeholder="Password (min 6 characters)">
-      <p id="authError" style="color:red; font-size:12px; margin-bottom:10px; font-weight:bold;"></p>
-      <button type="button" class="auth-btn" onclick="handleLogin()">Log In</button>
-      <button type="button" class="auth-btn secondary" onclick="handleRegister()">Sign Up</button>
-      <button type="button" style="background:none; border:none; color:gray; margin-top:8px;" onclick="document.getElementById('authScreen').style.display='none'">Cancel</button>
+  <!-- 2. Log In Screen -->
+  <div id="scLoginModal" class="sc-modal">
+    <div class="sc-top-bar">
+      <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
+      <span style="font-size:13px; color:#9aa4b2;">Email Auth</span>
+    </div>
+    <h2>Log In Via Email</h2>
+
+    <div class="sc-field-row">
+      <div class="sc-field-label">Email</div>
+      <input type="email" id="loginEmail" class="sc-field-input" placeholder="Enter your email">
+    </div>
+    <div class="sc-field-row">
+      <div class="sc-field-label">Password</div>
+      <input type="password" id="loginPass" class="sc-field-input" placeholder="Enter password">
+    </div>
+
+    <div style="margin-top:16px;">
+      <button type="button" style="background:none; border:none; color:#4da3ff; font-size:13px; padding:0; cursor:pointer;" onclick="openSignupModal()">
+        Need an account? Sign up via Email
+      </button>
+    </div>
+
+    <div id="loginError" class="sc-error"></div>
+
+    <div class="sc-submit-wrap">
+      <button type="button" id="loginBtn" class="sc-btn-primary" onclick="handleLogin()">Log In</button>
+    </div>
+  </div>
+
+  <!-- 3. Sign Up Screen -->
+  <div id="scSignupModal" class="sc-modal">
+    <div class="sc-top-bar">
+      <button type="button" class="sc-close-btn" onclick="backToSplash()">✕</button>
+      <span style="font-size:13px; color:#9aa4b2;">Create Account</span>
+    </div>
+    <h2>Sign up via Email</h2>
+
+    <div class="sc-field-row">
+      <div class="sc-field-label">Name</div>
+      <input type="text" id="signupName" class="sc-field-input" placeholder="Enter alias">
+    </div>
+    <div class="sc-field-row">
+      <div class="sc-field-label">Email</div>
+      <input type="email" id="signupEmail" class="sc-field-input" placeholder="Enter email address">
+    </div>
+    <div class="sc-field-row">
+      <div class="sc-field-label">Password</div>
+      <input type="password" id="signupPass" class="sc-field-input" placeholder="Set password (min 6 chars)">
+    </div>
+
+    <label class="sc-check-row">
+      <input type="checkbox" id="signupAgree" style="margin-top:2px;">
+      <span>
+        I have read and accept the
+        <a href="#" onclick="openPolicyModal(event)" style="color:#4da3ff; text-decoration:none;">SuperChat Terms &amp; Privacy Policy</a>.
+      </span>
+    </label>
+
+    <div id="signupError" class="sc-error"></div>
+
+    <div class="sc-submit-wrap">
+      <button type="button" class="sc-btn-primary" onclick="startSecurityCheck()">Accept and Continue</button>
+    </div>
+  </div>
+
+  <!-- 4. Security Verification Step -->
+  <div id="scVerifyModal" class="sc-modal">
+    <div class="sc-top-bar">
+      <button type="button" class="sc-close-btn" onclick="openSignupModal()">✕</button>
+      <span></span>
+    </div>
+    <div class="sc-verify-box">
+      <div class="sc-verify-icon">i</div>
+      <h3 style="margin:0 0 10px; font-size:20px;">Security Verification</h3>
+      <p style="margin:0 0 20px; font-size:14px; color:#b8c0cc; line-height:1.5;">
+        To protect SuperChat from automated spam, please complete quick verification before creating your account.
+      </p>
+      <label style="display:inline-flex; align-items:center; gap:8px; font-size:14px; margin-bottom:20px; cursor:pointer;">
+        <input type="checkbox" id="humanCheckBox">
+        <span>I am a human</span>
+      </label>
+      <div id="verifyError" class="sc-error" style="margin-top:0; margin-bottom:12px;"></div>
+      <button type="button" class="sc-btn-primary" onclick="completeSignupAfterVerify()">Start &amp; Create Account</button>
+    </div>
+  </div>
+
+  <!-- 5. Privacy Policy Modal -->
+  <div id="scPolicyModal" class="sc-modal">
+    <div class="sc-top-bar">
+      <button type="button" class="sc-close-btn" onclick="openSignupModal()">✕</button>
+      <span style="font-size:13px; color:#9aa4b2;">Privacy Policy</span>
+    </div>
+    <div class="sc-policy-box">
+      <h3 style="margin-top:0; color:#fff;">SUMMARY</h3>
+      <p>Your account email and chat messages are handled through Firebase services. Choose a strong password of at least 6 characters and avoid sharing sensitive personal details in public chat rooms.</p>
+    </div>
+    <div class="sc-submit-wrap">
+      <button type="button" class="sc-btn-primary" onclick="acceptPolicyAndReturn()">I have read and acknowledge</button>
     </div>
   </div>
 
@@ -97,7 +245,7 @@
         <div class="avatar av-orange">💳</div>
         <div>
           <h4 id="userEmailDisplay">User Profile</h4>
-          <p style="font-size:13px; color:#07C160;">Zero-Trust Wallet & Account Active</p>
+          <p style="font-size:13px; color:#07C160;">Zero-Trust Wallet &amp; Account Active</p>
         </div>
       </div>
     </div>
@@ -144,11 +292,138 @@
     let currentUser = null;
     let currentRoomId = "global_chat";
     let unsubscribeChat = null;
+    let pendingSignup = null;
 
-    function showAuth(mode) {
-      document.getElementById('authError').textContent = '';
-      document.getElementById('authScreen').style.display = 'flex';
-      document.getElementById('authTitle').textContent = mode === 'login' ? 'Log In' : 'Sign Up';
+    function hideAllModals() {
+      ['scLoginModal', 'scSignupModal', 'scVerifyModal', 'scPolicyModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+
+    function closeAllAuth() {
+      hideAllModals();
+      document.getElementById('scSplash').style.display = 'none';
+    }
+
+    function backToSplash() {
+      hideAllModals();
+      if (!currentUser) {
+        document.getElementById('scSplash').style.display = 'flex';
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById('scSplash').style.display = 'none';
+      hideAllModals();
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('scLoginModal').style.display = 'flex';
+    }
+
+    function openSignupModal() {
+      document.getElementById('scSplash').style.display = 'none';
+      hideAllModals();
+      document.getElementById('signupError').textContent = '';
+      document.getElementById('scSignupModal').style.display = 'flex';
+    }
+
+    function openPolicyModal(e) {
+      e.preventDefault();
+      hideAllModals();
+      document.getElementById('scPolicyModal').style.display = 'flex';
+    }
+
+    function acceptPolicyAndReturn() {
+      document.getElementById('signupAgree').checked = true;
+      openSignupModal();
+    }
+
+    function startSecurityCheck() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPass').value;
+      const agreed = document.getElementById('signupAgree').checked;
+      const err = document.getElementById('signupError');
+
+      if (!name) {
+        err.textContent = "Please enter your name (alias).";
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        err.textContent = "Please enter a valid email address.";
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        err.textContent = "Password must be at least 6 characters.";
+        return;
+      }
+      if (!agreed) {
+        err.textContent = "Please accept the Terms & Privacy Policy first.";
+        return;
+      }
+
+      pendingSignup = { name, email, pass };
+      hideAllModals();
+      document.getElementById('humanCheckBox').checked = false;
+      document.getElementById('verifyError').textContent = '';
+      document.getElementById('scVerifyModal').style.display = 'flex';
+    }
+
+    async function completeSignupAfterVerify() {
+      const checked = document.getElementById('humanCheckBox').checked;
+      const vErr = document.getElementById('verifyError');
+
+      if (!checked) {
+        vErr.textContent = "Please check 'I am a human' to continue.";
+        return;
+      }
+      if (!pendingSignup) {
+        openSignupModal();
+        return;
+      }
+
+      vErr.style.color = "#07C160";
+      vErr.textContent = "Creating account...";
+
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(pendingSignup.email, pendingSignup.pass);
+        if (cred.user && pendingSignup.name) {
+          await cred.user.updateProfile({ displayName: pendingSignup.name });
+        }
+        pendingSignup = null;
+        closeAllAuth();
+      } catch (e) {
+        vErr.style.color = "#ff4d4f";
+        vErr.textContent = e.message;
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const err = document.getElementById('loginError');
+
+      if (!email || !pass) {
+        err.style.color = "#ff4d4f";
+        err.textContent = "Enter email and password!";
+        return;
+      }
+
+      err.style.color = "#07C160";
+      err.textContent = "Logging in...";
+
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        err.textContent = "";
+        closeAllAuth();
+      } catch (e) {
+        err.style.color = "#ff4d4f";
+        err.textContent = e.message;
+      }
+    }
+
+    function handleLogout() {
+      auth.signOut();
     }
 
     function switchTab(id, title, btn) {
@@ -170,68 +445,17 @@
     auth.onAuthStateChanged((user) => {
       if (user) {
         currentUser = user;
-        document.getElementById('wechatSplash').style.display = 'none';
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('userEmailDisplay').textContent = user.email;
+        closeAllAuth();
+        const label = user.displayName ? `${user.displayName} (${user.email})` : user.email;
+        document.getElementById('userEmailDisplay').textContent = label;
         loadVideos();
         renderFriends();
       } else {
         currentUser = null;
-        document.getElementById('wechatSplash').style.display = 'flex';
+        hideAllModals();
+        document.getElementById('scSplash').style.display = 'flex';
       }
     });
-
-    function handleRegister() {
-      const email = document.getElementById('authEmail').value.trim();
-      const pass = document.getElementById('authPass').value;
-      const err = document.getElementById('authError');
-
-      if (!email || pass.length < 6) {
-        err.style.color = "red";
-        err.textContent = "Enter a valid email and password (min 6 chars)!";
-        return;
-      }
-
-      err.style.color = "#07C160";
-      err.textContent = "Creating account...";
-
-      auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => {
-          err.textContent = "";
-        })
-        .catch(e => {
-          err.style.color = "red";
-          err.textContent = e.message;
-        });
-    }
-
-    function handleLogin() {
-      const email = document.getElementById('authEmail').value.trim();
-      const pass = document.getElementById('authPass').value;
-      const err = document.getElementById('authError');
-
-      if (!email || !pass) {
-        err.style.color = "red";
-        err.textContent = "Enter email and password!";
-        return;
-      }
-
-      err.style.color = "#07C160";
-      err.textContent = "Logging in...";
-
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-          err.textContent = "";
-        })
-        .catch(e => {
-          err.style.color = "red";
-          err.textContent = e.message;
-        });
-    }
-
-    function handleLogout() {
-      auth.signOut();
-    }
 
     function handleAddFriend() {
       if (!currentUser) return;
